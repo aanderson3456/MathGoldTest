@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BabyBitcoin Mining Game</title>
+  <link rel="stylesheet" href="style.css?v=7">
+  <!-- Premium Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-wrapper">
+    <!-- Header -->
+    <header class="game-header">
+      <h1>BabyBitcoin <span>Mining & Hashing</span></h1>
+      <p class="subtitle">A 2-bit word, 4-round facsimile of the SHA-256 block cipher used in Bitcoin consensus.</p>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+      <!-- Left Column: Controls & Game Stats -->
+      <aside class="sidebar">
+        <!-- Mode Toggles -->
+        <div class="control-card">
+          <button id="btn-game-mode" class="btn primary-btn">🎮 Enter Game Mode</button>
+          <button id="btn-reset" class="btn secondary-btn">🔄 Reset Input State</button>
+          
+          <div class="level-selector-wrapper">
+            <label class="control-label">Active Block / Level:</label>
+            <div class="level-buttons" id="level-buttons-container">
+              <button class="level-btn active" data-level="1">1</button>
+              <button class="level-btn" data-level="2">2</button>
+              <button class="level-btn" data-level="3">3</button>
+              <button class="level-btn" data-level="4">4</button>
+              <button class="level-btn" data-level="5">5</button>
+              <button class="level-btn" data-level="6">6</button>
+              <button class="level-btn" data-level="7">7</button>
+              <button class="level-btn" data-level="8">8 🌀</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Normal Mode Help -->
+        <div id="panel-normal" class="stats-card">
+          <h3>Interactive Mode</h3>
+          <p>Click the registers in <strong>Row 0 (Input)</strong> to cycle their values (00, 01, 10, 11). Watch the values mix and flow through the 4 rounds of cryptographic wiring to produce the final Hash output in Row 4.</p>
+          <div class="legend">
+            <h4>Value Legend:</h4>
+            <div class="legend-item"><span class="color-box val-0"></span> 00 (Value 0)</div>
+            <div class="legend-item"><span class="color-box val-1"></span> 01 (Value 1)</div>
+            <div class="legend-item"><span class="color-box val-2"></span> 10 (Value 2)</div>
+            <div class="legend-item"><span class="color-box val-3"></span> 11 (Value 3)</div>
+          </div>
+        </div>
+
+        <!-- Game Mode HUD -->
+        <div id="panel-game" class="stats-card hidden">
+          <div class="hud-header">
+            <h3>Mining Block #<span id="hud-level">1</span></h3>
+            <div class="lives-display" id="hud-lives">❤️❤️❤️</div>
+          </div>
+          
+          <div class="target-box">
+            <h4>Target Difficulty:</h4>
+            <p id="hud-target-desc">Mine a block where register <strong>a</strong> is <strong>00</strong></p>
+            <div class="probability-label">Success Rate: <span id="hud-prob">25%</span></div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-item">
+              <span class="label">Total Score:</span>
+              <strong id="hud-score" class="value text-gold">0</strong>
+            </div>
+            <div class="score-item">
+              <span class="label">Hashes Tried:</span>
+              <strong id="hud-hashes" class="value">0 / 10</strong>
+            </div>
+          </div>
+
+          <div class="action-box">
+            <button id="btn-hash" class="btn hash-btn">🚀 Mine / Hash State</button>
+          </div>
+
+          <div class="waste-tracker">
+            <h4>Wasted Hashes Heap (Geometric Waste):</h4>
+            <div class="wasted-count" id="hud-waste-count">0 wasted hashes</div>
+            <div class="waste-bin" id="hud-waste-bin">
+              <!-- Nonce tags fall in here -->
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Interactive SVG Wiring Diagram & Fractal Grid -->
+      <main class="diagram-container">
+        <svg id="wiring-svg" width="800" height="550" viewBox="0 0 800 550">
+          <!-- Connection lines will be drawn here dynamically by app.js -->
+          <g id="wires-group"></g>
+          <!-- Register nodes will be drawn here dynamically by app.js -->
+          <g id="nodes-group"></g>
+        </svg>
+
+        <!-- Fractal Grid Container -->
+        <div id="fractal-panel" class="fractal-panel hidden">
+          <div class="fractal-header">
+            <h3 id="fractal-title">State-Space Fractal Map (65,536 States)</h3>
+            <p id="fractal-subtitle">Hover to inspect orbits. Click to select input state and trace path.</p>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="fractal-canvas" width="256" height="256"></canvas>
+            <div id="fractal-tooltip" class="fractal-tooltip hidden"></div>
+          </div>
+          <div class="fractal-info">
+            <div class="info-item">
+              <span class="dot val-fixed"></span> Fixed Points
+            </div>
+            <div class="info-item">
+              <span class="dot val-small"></span> Short Cycles
+            </div>
+            <div class="info-item">
+              <span class="dot val-large"></span> Medium Orbits
+            </div>
+            <div class="info-item">
+              <span class="dot val-giant"></span> Giant Orbits
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Fullscreen Modals -->
+  <!-- Level Success Modal -->
+  <div id="modal-success" class="modal-overlay hidden">
+    <div class="modal-content success-content">
+      <h2>🎉 BLOCK MINED! 🎉</h2>
+      <p id="modal-success-desc">Efficiency Bonus Awarded!</p>
+      <button id="btn-next-level" class="btn success-btn">Advance to Next Block ➔</button>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="modal-gameover" class="modal-overlay hidden">
+    <div class="modal-content gameover-content">
+      <h2>💀 MINING BANKRUPTCY 💀</h2>
+      <p>Your mining pool ran out of computational power and failed to hit the difficulty target.</p>
+      <button id="btn-restart" class="btn danger-btn">Restart Game</button>
+    </div>
+  </div>
+
+  <!-- Game Beaten / Victory Modal -->
+  <div id="modal-victory" class="modal-overlay hidden">
+    <div class="modal-content victory-content">
+      <h2>🏆 MATHGOD HALL OF FAME 🏆</h2>
+      <p>Congratulations! You successfully mined all blocks and solved the BabyBitcoin network.</p>
+      <div class="final-score">Final Score: <span id="modal-final-score">0</span></div>
+      <button id="btn-victory-restart" class="btn success-btn">Play Again</button>
+    </div>
+  </div>
+
+  <script src="app.js?v=11"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track the latest Google Cloud BigQuery release notes and updates live. Filter announcements, features, and issues, and share them directly to Twitter.">
+    <title>BigQuery Release Pulse - Live Updates Tracker</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Background Gradient Grids -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div>
+                    <h2>BQ Pulse</h2>
+                    <span class="sub-brand">BigQuery Releases</span>
+                </div>
+            </div>
+
+            <!-- Stats Widget -->
+            <div class="widget card">
+                <h3 class="widget-title"><i class="fa-solid fa-chart-simple"></i> Feed Analytics</h3>
+                <div class="stats-grid" id="stats-container">
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-total">-</span>
+                        <span class="stat-label">Total Updates</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num color-feature" id="stat-features">-</span>
+                        <span class="stat-label">Features</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num color-issue" id="stat-issues">-</span>
+                        <span class="stat-label">Issues</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num color-announcement" id="stat-announcements">-</span>
+                        <span class="stat-label">Announcements</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tweet Composer / Preview Widget -->
+            <div class="widget card tweet-widget">
+                <h3 class="widget-title"><i class="fa-brands fa-x-twitter"></i> Tweet Composer</h3>
+                <div class="tweet-composer-body">
+                    <p class="composer-tip" id="composer-tip">Select a release note card from the feed to compose and post a tweet about it.</p>
+                    
+                    <div class="composer-content hidden" id="composer-content">
+                        <!-- Mock Tweet Box -->
+                        <div class="mock-tweet">
+                            <div class="mock-tweet-header">
+                                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=60" alt="Profile" class="mock-profile-img">
+                                <div class="mock-user-info">
+                                    <span class="mock-name">Google Cloud Explorer</span>
+                                    <span class="mock-handle">@GCPExplorer</span>
+                                </div>
+                                <i class="fa-brands fa-x-twitter mock-x-logo"></i>
+                            </div>
+                            <div class="mock-tweet-body">
+                                <textarea id="tweet-textarea" placeholder="What's happening?" maxlength="280"></textarea>
+                            </div>
+                            <div class="mock-tweet-footer">
+                                <span class="char-counter" id="char-counter">0 / 280</span>
+                            </div>
+                        </div>
+
+                        <!-- Tweet Action Buttons -->
+                        <div class="tweet-actions">
+                            <button id="tweet-btn" class="btn btn-primary btn-tweet">
+                                <i class="fa-brands fa-x-twitter"></i> Post to Twitter
+                            </button>
+                            <button id="clear-select-btn" class="btn btn-secondary btn-small">
+                                Clear Selection
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <p>Data fetched from official <a href="https://docs.cloud.google.com/feeds/bigquery-release-notes.xml" target="_blank" rel="noopener noreferrer">Google Cloud Feed <i class="fa-solid fa-arrow-up-right-from-square"></i></a></p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-info">
+                    <h1>BigQuery Release Pulse</h1>
+                    <p class="subtitle">Live tracking of official BigQuery release notes, updates, and deprecation details.</p>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="status-indicator">
+                        <span class="status-dot pulsed" id="status-dot"></span>
+                        <span id="status-text">Connected</span>
+                    </div>
+                    <button id="refresh-btn" class="btn btn-primary refresh-button" aria-label="Refresh release notes">
+                        <i class="fa-solid fa-rotate-right" id="refresh-icon"></i>
+                        <span>Refresh Notes</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Filters & Search Toolbar -->
+            <section class="toolbar card">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search updates (e.g. Gemini, partition, table)..." aria-label="Search release notes">
+                </div>
+                
+                <div class="filter-group">
+                    <span class="filter-label">Filter Type:</span>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-type="all">All</button>
+                        <button class="filter-btn" data-type="Feature">Features</button>
+                        <button class="filter-btn" data-type="Issue">Issues</button>
+                        <button class="filter-btn" data-type="Announcement">Announcements</button>
+                        <button class="filter-btn" data-type="other">Other</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading, Error & Empty States -->
+            <div class="status-overlay hidden" id="loading-state">
+                <div class="spinner-container">
+                    <div class="pulse-spinner"></div>
+                    <p>Fetching latest release notes from Google Cloud...</p>
+                </div>
+            </div>
+
+            <div class="status-overlay hidden" id="error-state">
+                <div class="status-card error-card">
+                    <i class="fa-solid fa-triangle-exclamation error-icon"></i>
+                    <h3>Failed to Fetch Updates</h3>
+                    <p id="error-message">An error occurred while connecting to the BigQuery feed. Please try again.</p>
+                    <button id="retry-btn" class="btn btn-secondary"><i class="fa-solid fa-arrows-rotate"></i> Retry Connection</button>
+                </div>
+            </div>
+
+            <!-- Main Feed -->
+            <section class="feed-section" id="feed-container">
+                <!-- Release cards will be injected here by JavaScript -->
+            </section>
+        </main>
+    </div>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
