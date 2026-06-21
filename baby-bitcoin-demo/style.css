@@ -49,8 +49,40 @@ h1, h2, h3, h4, .font-heading {
 /* Header */
 .game-header {
   margin-bottom: 24px;
-  border-bottom: 1px solid var(--bg-tertiary);
-  padding-bottom: 16px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.algo-switcher {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.algo-switcher label {
+  color: #94a3b8;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.algo-switcher select {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  padding: 6px 10px;
+  border-radius: 4px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .game-header h1 {
@@ -73,16 +105,17 @@ h1, h2, h3, h4, .font-heading {
 
 /* Workspace Grid */
 .workspace {
-  display: grid;
-  grid-template-columns: 320px 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   flex: 1;
 }
 
-/* Sidebar & Stats Panel */
-.sidebar {
+/* Top Controls Panel */
+.top-controls {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
   gap: 20px;
 }
 
@@ -337,7 +370,7 @@ h1, h2, h3, h4, .font-heading {
 
 /* Adjust SVG width when the fractal panel is visible side-by-side */
 .diagram-container:has(.fractal-panel:not(.hidden)) #wiring-svg {
-  max-width: calc(100% - 340px);
+  max-width: calc(100% - 570px);
 }
 
 /* SVG Elements Styling */

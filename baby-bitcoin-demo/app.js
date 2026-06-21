@@ -14,6 +14,11 @@ let gameOver = false;
 let levelComplete = false;
 let gameBeaten = false;
 
+// Cipher Parameters
+let enableRotations = true;
+let enableLogic = true;
+let enableConstants = true;
+
 let hashesUsed = 0;
 let hashBudget = 10;
 let wastedHashesList = [];
@@ -39,6 +44,28 @@ const btnHash = document.getElementById('btn-hash');
 const btnNextLevel = document.getElementById('btn-next-level');
 const btnRestart = document.getElementById('btn-restart');
 const btnVictoryRestart = document.getElementById('btn-victory-restart');
+const btnAutoExplore = document.getElementById('btn-auto-explore');
+const btnTrace = document.getElementById('btn-trace');
+const traceStats = document.getElementById('trace-stats');
+const traceIters = document.getElementById('trace-iters');
+const traceDist = document.getElementById('trace-dist');
+
+// Auto-Explore & Trace State
+let isAutoExploring = false;
+let autoExploreReqId = null;
+let isTracing = false;
+let traceReqId = null;
+let traceCurrentState = 0;
+let traceIterationCount = 0;
+let traceRecentJumps = [];
+let traceLastCoords = null;
+
+let bgCanvas = document.createElement('canvas');
+bgCanvas.width = 256;
+bgCanvas.height = 256;
+let bgCtx = bgCanvas.getContext('2d');
+let unvisitedStates = [];
+let cometPath = [];
 
 const panelNormal = document.getElementById('panel-normal');
 const panelGame = document.getElementById('panel-game');
@@ -50,6 +77,10 @@ const hudProb = document.getElementById('hud-prob');
 const hudScore = document.getElementById('hud-score');
 const hudHashes = document.getElementById('hud-hashes');
 const hudWasteCount = document.getElementById('hud-waste-count');
+
+const toggleRotations = document.getElementById('toggle-rotations');
+const toggleLogic = document.getElementById('toggle-logic');
+const toggleConstants = document.getElementById('toggle-constants');
 const hudWasteBin = document.getElementById('hud-waste-bin');
 
 const modalSuccess = document.getElementById('modal-success');
@@ -72,6 +103,10 @@ function rot1(x) {
   return x;
 }
 
+function rot2(x) {
+  return x;
+}
+
 function ch(e, f, g) {
   return xor(and(e, f), and(not(e), g));
 }
@@ -83,10 +118,19 @@ function maj(a, b, c) {
 function sig0(a) { return xor(rot1(a), a); }
 function sig1(e) { return xor(rot1(e), e); }
 
-function computeRound(state, rKey, rWord) {
+let currentAlgorithm = 'SHA256';
+
+function computeRoundSHA(state, rKey, rWord) {
   const [a, b, c, d, e, f, g, h] = state;
-  const T1 = (h + sig1(e) + ch(e, f, g) + rKey + rWord) % 4;
-  const T2 = (sig0(a) + maj(a, b, c)) % 4;
+  const sig1_val = enableRotations ? sig1(e) : 0;
+  const ch_val = enableLogic ? ch(e, f, g) : 0;
+  const rKey_val = enableConstants ? rKey : 0;
+  const rWord_val = enableConstants ? rWord : 0;
+  const T1 = (h + sig1_val + ch_val + rKey_val + rWord_val) % 4;
+  
+  const sig0_val = enableRotations ? sig0(a) : 0;
+  const maj_val = enableLogic ? maj(a, b, c) : 0;
+  const T2 = (sig0_val + maj_val) % 4;
   
   return [
     (T1 + T2) % 4,
@@ -98,6 +142,48 @@ function computeRound(state, rKey, rWord) {
     f,
     g
   ];
+}
+
+const sbox4 = [0, 1, 9, 14, 13, 11, 7, 6, 15, 2, 12, 5, 10, 4, 3, 8];
+
+function computeRoundAES(state, rKey, rWord) {
+  // 1. SubBytes: Pair into 4-bit nibbles and map via S-Box
+  const n0 = (state[0] << 2) | state[1];
+  const n1 = (state[2] << 2) | state[3];
+  const n2 = (state[4] << 2) | state[5];
+  const n3 = (state[6] << 2) | state[7];
+  
+  const s0 = sbox4[n0];
+  const s1 = sbox4[n1];
+  const s2 = sbox4[n2];
+  const s3 = sbox4[n3];
+  
+  const subState = [
+    (s0 >> 2) & 3, s0 & 3,
+    (s1 >> 2) & 3, s1 & 3,
+    (s2 >> 2) & 3, s2 & 3,
+    (s3 >> 2) & 3, s3 & 3
+  ];
+  
+  // 2. ShiftRows (Permutation to create diffusion)
+  const shiftState = [
+    subState[0], subState[3], subState[6], subState[1],
+    subState[4], subState[7], subState[2], subState[5]
+  ];
+  
+  // 3. AddRoundKey (XOR with key schedule)
+  const finalState = [];
+  for (let i = 0; i < 8; i++) {
+    const keyPart = (i % 2 === 0) ? rKey : rWord;
+    finalState.push(shiftState[i] ^ keyPart);
+  }
+  
+  return finalState;
+}
+
+function computeRound(state, rKey, rWord) {
+  if (currentAlgorithm === 'AES') return computeRoundAES(state, rKey, rWord);
+  return computeRoundSHA(state, rKey, rWord);
 }
 
 function getNumRounds() {
@@ -143,7 +229,7 @@ function recomputeAll() {
     gridStates.push(current);
   }
   updateDiagram();
-  if (gameLevel >= 2) {
+  if (gameLevel >= 2 && !isAutoExploring && !isTracing) {
     drawFractal();
   }
 }
@@ -176,15 +262,21 @@ function initDiagram() {
       let targetCol = c;
       let isFeedback = false;
 
-      // Define SHA wiring mapping
-      if (c === 0) { targetCol = 1; } // a -> b
-      else if (c === 1) { targetCol = 2; } // b -> c
-      else if (c === 2) { targetCol = 3; } // c -> d
-      else if (c === 3) { targetCol = 4; isFeedback = true; } // d -> e (addition feedback)
-      else if (c === 4) { targetCol = 5; } // e -> f
-      else if (c === 5) { targetCol = 6; } // f -> g
-      else if (c === 6) { targetCol = 7; } // g -> h
-      else if (c === 7) { targetCol = 0; isFeedback = true; } // h -> a (T1 feedback)
+      if (currentAlgorithm === 'AES') {
+        // AES ShiftRows mapping
+        const aesMap = {0: 0, 1: 3, 2: 6, 3: 1, 4: 4, 5: 7, 6: 2, 7: 5};
+        targetCol = aesMap[c];
+      } else {
+        // Define SHA wiring mapping
+        if (c === 0) { targetCol = 1; } // a -> b
+        else if (c === 1) { targetCol = 2; } // b -> c
+        else if (c === 2) { targetCol = 3; } // c -> d
+        else if (c === 3) { targetCol = 4; isFeedback = true; } // d -> e (addition feedback)
+        else if (c === 4) { targetCol = 5; } // e -> f
+        else if (c === 5) { targetCol = 6; } // f -> g
+        else if (c === 6) { targetCol = 7; } // g -> h
+        else if (c === 7) { targetCol = 0; isFeedback = true; } // h -> a (T1 feedback)
+      }
 
       const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
       line.setAttribute("id", `wire-${r}-${c}`);
@@ -204,6 +296,34 @@ function initDiagram() {
       line.setAttribute("opacity", "0.4");
       
       wiresGroup.appendChild(line);
+    }
+    
+    // Draw Cotton Gin Icon for this round
+    if (currentAlgorithm === 'SHA256') {
+      const gGear = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      const iconX = getRegisterX(3) + 45; // Between D and E roughly
+      const iconY = getRegisterY(r) + 55;
+      gGear.setAttribute("transform", `translate(${iconX}, ${iconY})`);
+      gGear.setAttribute("class", "cotton-gin-icon");
+      gGear.style.cursor = "pointer";
+      gGear.addEventListener("click", () => openCompressorModal(r));
+      
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("r", "16");
+      circle.setAttribute("fill", "#1e293b");
+      circle.setAttribute("stroke", "#fbbf24");
+      circle.setAttribute("stroke-width", "2");
+      
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("alignment-baseline", "middle");
+      text.setAttribute("dy", "2");
+      text.setAttribute("font-size", "18px");
+      text.textContent = "⚙️";
+      
+      gGear.appendChild(circle);
+      gGear.appendChild(text);
+      wiresGroup.appendChild(gGear);
     }
   }
 
@@ -231,9 +351,7 @@ function initDiagram() {
       circle.setAttribute("stroke", "#ffffff");
       circle.setAttribute("stroke-width", "1");
 
-      if (r === 0) {
-        circle.addEventListener("click", () => cycleInputRegister(c));
-      }
+      circle.addEventListener("click", () => handleNodeClick(r, c));
 
       const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
       text.setAttribute("id", `node-text-${r}-${c}`);
@@ -295,6 +413,221 @@ function isGameNodeTarget(colIndex) {
   if (gameLevel === 5) return colIndex === 0 || colIndex === 1;
   if (gameLevel === 6) return colIndex === 0 || colIndex === 1 || colIndex === 4;
   return colIndex === 0 || colIndex === 1 || colIndex === 4 || colIndex === 5; // Level 7 and 8
+}
+
+function handleNodeClick(r, c) {
+  if (r === 0) {
+    cycleInputRegister(c);
+  }
+  
+  const explanationEl = document.getElementById('register-explanation');
+  if (!explanationEl) return;
+  
+  const regName = regNames[c].toUpperCase();
+  const val = gridStates[r][c];
+  const label = valueLabels[val];
+  const color = valueColors[val];
+  const colorSpan = `<span style="color: ${color}; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 4px; border-radius: 3px;">${label}</span>`;
+  
+  let text = '';
+  
+  if (r === 0) {
+    text = `<strong>Row 0, Register ${regName}:</strong> Currently holding ${colorSpan}. This is part of the initial state. In mining, this is the <em>Nonce</em> or input data we guess to find a target hash!`;
+  } else {
+    if (currentAlgorithm === 'AES') {
+      text = `<strong>AES Mode, Register ${regName} (${colorSpan}):</strong> AES is built on a substitution-permutation network. Each 4-bit pair passes through an <em>S-Box</em> (non-linear substitution), then columns are swapped in <em>ShiftRows</em>, and finally XORed with the Round Key!`;
+    } else {
+      // SHA-256 Explanations
+      const t1Span = `<span style="color: #ef4444; font-weight: bold; cursor: pointer; text-decoration: underline;" onclick="openCompressorModal(${r - 1})">T1</span>`;
+      const t2Span = `<span style="color: #10b981; font-weight: bold; cursor: pointer; text-decoration: underline;" onclick="openCompressorModal(${r - 1})">T2</span>`;
+      
+      if (c === 0) { // A
+        text = `<strong>Row ${r}, Register A (The Chaos Head) [${colorSpan}]:</strong> This register is heavily mutated! It receives the full chaotic mix of the entire system. It adds the output of the ${t1Span} compressor (mixing E, F, G, H, and Keys) to the ${t2Span} compressor (mixing A, B, and C).`;
+      } else if (c === 4) { // E
+        text = `<strong>Row ${r}, Register E (The Inner Injection) [${colorSpan}]:</strong> The second special injection point! Instead of just shifting, it takes the old value of D and adds ${t1Span} (a chaotic mix of E, F, G, H, the Key, and Word). This splits the avalanche effect across the two halves of the state!`;
+      } else { // B, C, D, F, G, H
+        let sourceReg = regNames[c - 1].toUpperCase();
+        text = `<strong>Row ${r}, Register ${regName} (Shift Register) [${colorSpan}]:</strong> A simple shift register. It perfectly copies the value of Register <strong>${sourceReg}</strong> from the previous round without mutating it.`;
+      }
+    }
+  }
+  
+  explanationEl.innerHTML = text;
+}
+
+function openCompressorModal(r) {
+  if (currentAlgorithm !== 'SHA256') return;
+  const state = gridStates[r];
+  const [a, b, c, d, e, f, g, h] = state;
+  
+  // Get parameter variables
+  const k = enableConstants ? K[r] : 0;
+  const w = enableConstants ? W[r] : 0;
+    
+  // Calculate intermediate values based on toggles
+  const sig1_val = enableRotations ? sig1(e) : 0;
+  const ch_val = enableLogic ? ch(e, f, g) : 0;
+  const T1 = (h + sig1_val + ch_val + k + w) % 4;
+
+  const sig0_val = enableRotations ? sig0(a) : 0;
+  const maj_val = enableLogic ? maj(a, b, c) : 0;
+  const T2 = (sig0_val + maj_val) % 4;
+  
+  const colorFormat = (val) => `<span style="color: ${valueColors[val]}; background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px;">${valueLabels[val]}</span>`;
+  
+  let html = `
+    <div style="color: var(--accent); margin-bottom: 8px; font-weight: bold; font-size: 1.1em;">Round ${r + 1} Compressor Math:</div>
+    <div><strong style="color: #ef4444;">T1</strong> = (H + &Sigma;1(E) + Ch(E,F,G) + K + W) mod 4</div>
+    <div style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 10px;">
+      H = ${colorFormat(h)}<br>
+      ${enableRotations ? `&Sigma;1(E) = &Sigma;1(${colorFormat(e)}) = ${colorFormat(sig1_val)}` : `&Sigma;1(E) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      ${enableLogic ? `Ch(E,F,G) = Ch(${colorFormat(e)}, ${colorFormat(f)}, ${colorFormat(g)}) = ${colorFormat(ch_val)}` : `Ch(E,F,G) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      ${enableConstants ? `K = ${colorFormat(k)}<br>W = ${colorFormat(w)}` : `K, W = <span style="color: #ef4444;">DISABLED</span> = 00, 00`}<br>
+      <strong style="color: #ef4444;">T1 = ${colorFormat(T1)}</strong>
+    </div>
+    
+    <div><strong style="color: #10b981;">T2</strong> = (&Sigma;0(A) + Maj(A,B,C)) mod 4</div>
+    <div style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 10px;">
+      ${enableRotations ? `&Sigma;0(A) = &Sigma;0(${colorFormat(a)}) = ${colorFormat(sig0_val)}` : `&Sigma;0(A) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      ${enableLogic ? `Maj(A,B,C) = Maj(${colorFormat(a)}, ${colorFormat(b)}, ${colorFormat(c)}) = ${colorFormat(maj_val)}` : `Maj(A,B,C) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      <strong style="color: #10b981;">T2 = ${colorFormat(T2)}</strong>
+    </div>
+    
+    <div style="border-top: 1px dashed var(--border); padding-top: 10px;">
+      <strong>New A</strong> = (<span style="color: #ef4444;">T1</span> + <span style="color: #10b981;">T2</span>) mod 4 = (${colorFormat(T1)} + ${colorFormat(T2)}) mod 4 = ${colorFormat((T1 + T2) % 4)}<br>
+      <strong>New E</strong> = (D + <span style="color: #ef4444;">T1</span>) mod 4 = (${colorFormat(d)} + ${colorFormat(T1)}) mod 4 = ${colorFormat((d + T1) % 4)}
+    </div>
+  `;
+  
+  const e_color = colorFormat(e);
+  const rot1_e = colorFormat(rot1(e));
+  const rot2_e = colorFormat(rot2(e));
+  const sig1_e = colorFormat(sig1(e));
+  
+  const explainerHtml = `
+    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; font-family: monospace; margin: 12px 0;">
+      Example: E = ${e_color}<br><br>
+      <strong>rot1</strong>(${valueLabels[e]}) = ${rot1_e} <em>(shifted 1)</em><br>
+      <strong>rot2</strong>(${valueLabels[e]}) = ${rot2_e} <em>(360&deg; spin)</em>
+    </div>
+    
+    <p>The <strong>&Sigma; (Sigma)</strong> function rotates the bits by different amounts and then XORs (&oplus;) them together to scramble the entropy.</p>
+    
+    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; font-family: monospace; margin: 12px 0;">
+      &Sigma;1(${valueLabels[e]}) = rot1 &oplus; rot2<br>
+      &Sigma;1(${valueLabels[e]}) = ${rot1_e} &oplus; ${rot2_e} = ${sig1_e}
+    </div>
+  `;
+  
+  document.getElementById('compressor-math').innerHTML = html;
+  document.getElementById('rotate-explainer-content').innerHTML = explainerHtml;
+  
+  drawMiniDiagram(r);
+  
+  document.getElementById('modal-compressor').classList.remove('hidden');
+}
+
+function drawMiniDiagram(r) {
+  const container = document.getElementById('mini-diagram');
+  container.innerHTML = '';
+  
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const computedHeight = 150;
+  svg.setAttribute('viewBox', `0 0 800 ${computedHeight}`);
+  svg.setAttribute('style', 'width: 100%; height: auto;');
+  
+  const wiresGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  const nodesGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  svg.appendChild(wiresGroup);
+  svg.appendChild(nodesGroup);
+
+  const row0_y = 35;
+  const row1_y = 115;
+  
+  // 1. Draw Wires
+  for (let c = 0; c < 8; c++) {
+    let targetCol = c;
+    let isFeedback = false;
+    if (c === 0) { targetCol = 1; }
+    else if (c === 1) { targetCol = 2; }
+    else if (c === 2) { targetCol = 3; }
+    else if (c === 3) { targetCol = 4; isFeedback = true; }
+    else if (c === 4) { targetCol = 5; }
+    else if (c === 5) { targetCol = 6; }
+    else if (c === 6) { targetCol = 7; }
+    else if (c === 7) { targetCol = 0; isFeedback = true; }
+
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const x1 = getRegisterX(c);
+    const y1 = row0_y + 16;
+    const x2 = getRegisterX(targetCol);
+    const y2 = row1_y - 16;
+    
+    const controlY = y1 + (y2 - y1) / 2;
+    const dPath = `M ${x1} ${y1} C ${x1} ${controlY}, ${x2} ${controlY}, ${x2} ${y2}`;
+    line.setAttribute("d", dPath);
+    line.setAttribute("fill", "none");
+    
+    const val = gridStates[r][c];
+    const color = valueColors[val];
+    line.setAttribute("stroke", color);
+    line.setAttribute("stroke-width", val > 0 ? "2.5" : "1.5");
+    line.setAttribute("opacity", val === 0 ? "0.3" : "0.85");
+    
+    wiresGroup.appendChild(line);
+  }
+  
+  // 2. Gear removed as per user request
+
+  // 3. Draw Nodes
+  for (let rowIdx = 0; rowIdx <= 1; rowIdx++) {
+    const dataRow = gridStates[r + rowIdx];
+    const y = rowIdx === 0 ? row0_y : row1_y;
+    
+    const rLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    rLabel.setAttribute("x", "12");
+    rLabel.setAttribute("y", y + 5);
+    rLabel.setAttribute("class", "row-label");
+    rLabel.textContent = rowIdx === 0 ? (r === 0 ? "Input (R0)" : `Round ${r}`) : `Round ${r+1}`;
+    nodesGroup.appendChild(rLabel);
+    
+    for (let c = 0; c < 8; c++) {
+      const val = dataRow[c];
+      const color = valueColors[val];
+      const label = valueLabels[val];
+      
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("transform", `translate(${getRegisterX(c)}, ${y})`);
+      g.style.cursor = "pointer";
+      g.addEventListener("click", () => {
+         handleNodeClick(r + rowIdx, c);
+         if (r + rowIdx === 0) {
+            recomputeAll();
+            openCompressorModal(0);
+         }
+      });
+      
+      const cNode = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      cNode.setAttribute("class", "svg-node");
+      cNode.setAttribute("r", "14");
+      cNode.setAttribute("fill", color);
+      cNode.setAttribute("stroke", rowIdx === 0 ? "#ffffff" : "#445");
+      cNode.setAttribute("stroke-width", rowIdx === 0 ? "2" : "1");
+
+      const tNode = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      tNode.setAttribute("class", "node-text");
+      tNode.setAttribute("text-anchor", "middle");
+      tNode.setAttribute("alignment-baseline", "middle");
+      tNode.setAttribute("dy", "3");
+      tNode.textContent = regNames[c].toUpperCase() + ":" + label;
+
+      g.appendChild(cNode);
+      g.appendChild(tNode);
+      nodesGroup.appendChild(g);
+    }
+  }
+
+  container.appendChild(svg);
 }
 
 function cycleInputRegister(colIndex) {
@@ -478,11 +811,6 @@ function hashState() {
 }
 
 // --- FRACTAL GRID DRAWING & LOGIC ---
-const finalFractalImg = new Image();
-finalFractalImg.src = 'fractal_final.png';
-finalFractalImg.onload = () => {
-  if (gameLevel >= 2) drawFractal();
-};
 
 function getCycleColorRGB(length) {
   if (length === 1) return [255, 255, 255]; // fixed point — white glow
@@ -505,22 +833,38 @@ function computeAllCycleLengths(numRounds) {
   if (cycleLengths && cycleLengthsRoundCount === numRounds) return;
   cycleLengths = new Int32Array(65536);
   cycleLengthsRoundCount = numRounds;
-  const visited = new Uint8Array(65536);
+  
+  // 0: unvisited, 1: visited in current path, 2: fully processed
+  const stateStatus = new Uint8Array(65536);
   
   for (let i = 0; i < 65536; i++) {
-    if (visited[i]) continue;
+    if (stateStatus[i] === 2) continue;
     
     const path = [];
     let curr = i;
-    while (!visited[curr]) {
-      visited[curr] = 1;
+    
+    // Walk until we hit a state we've seen before (either in this path, or a previous one)
+    while (stateStatus[curr] === 0) {
+      stateStatus[curr] = 1;
       path.push(curr);
       curr = stateToInt(runNRounds(intToState(curr), numRounds));
     }
     
-    const len = path.length;
-    for (let j = 0; j < len; j++) {
-      cycleLengths[path[j]] = len;
+    let cycleLen;
+    if (stateStatus[curr] === 1) {
+      // We hit a state in the CURRENT path -> we found a new cycle!
+      // The cycle length is the distance from the first occurrence of `curr` to the end.
+      const cycleStartIndex = path.indexOf(curr);
+      cycleLen = path.length - cycleStartIndex;
+    } else {
+      // We hit a state from a PREVIOUS path -> we merge into an existing cycle
+      cycleLen = cycleLengths[curr];
+    }
+    
+    // Assign this cycle length to all states in the path, and mark them fully processed
+    for (let j = 0; j < path.length; j++) {
+      cycleLengths[path[j]] = cycleLen;
+      stateStatus[path[j]] = 2;
     }
   }
 }
@@ -554,10 +898,18 @@ function drawFractal() {
   const titleEl = document.getElementById('fractal-title');
   const subtitleEl = document.getElementById('fractal-subtitle');
   if (titleEl) {
-    if (gameLevel < 8) {
-      titleEl.textContent = `4-Round State-Space Map (Preview)`;
+    if (currentAlgorithm === 'AES') {
+      if (gameLevel < 8) {
+        titleEl.textContent = `4-Round AES/Galois Fractal (Preview)`;
+      } else {
+        titleEl.textContent = 'AES/Galois Fractal (65,536 States)';
+      }
     } else {
-      titleEl.textContent = 'State-Space Fractal Map (65,536 States)';
+      if (gameLevel < 8) {
+        titleEl.textContent = `4-Round State-Space Map (Preview)`;
+      } else {
+        titleEl.textContent = 'State-Space Fractal Map (65,536 States)';
+      }
     }
   }
   if (subtitleEl) {
@@ -602,26 +954,7 @@ function drawFractal() {
   canvasContext.clearRect(0, 0, 1024, 1024);
   canvasContext.drawImage(offCanvas, 0, 0, 1024, 1024);
   
-  // --- BLEND THE FINAL FRACTAL IMAGE OVER THE PIXEL MAP ---
-  if (finalFractalImg.complete) {
-    // Opacity schedule: slowly fade in the beautiful final fractal
-    const opacities = {1: 0, 2: 0.05, 3: 0.15, 4: 0.3, 5: 0.5, 6: 0.7, 7: 0.85, 8: 1.0};
-    const op = opacities[gameLevel] || 0;
-    
-    if (op > 0) {
-      // Use 'lighten' or 'screen' so it adds its beautiful neon glow onto the pixels
-      canvasContext.globalCompositeOperation = 'screen';
-      canvasContext.globalAlpha = op;
-      // The image also needs to be drawn crisp if possible, but screen handles it well
-      canvasContext.imageSmoothingEnabled = true; // smooth the nice fractal image
-      canvasContext.drawImage(finalFractalImg, 0, 0, 1024, 1024);
-      
-      // reset
-      canvasContext.globalCompositeOperation = 'source-over';
-      canvasContext.globalAlpha = 1.0;
-    }
-  }
-  
+
   // Highlight wasted nonces as red dots
   wastedHashesList.forEach(nonceStr => {
     const wState = nonceToState(nonceStr);
@@ -648,6 +981,253 @@ function drawFractal() {
   canvasContext.strokeStyle = '#000000';
   canvasContext.lineWidth = 4;
   canvasContext.stroke();
+}
+
+// --- AUTO-EXPLORE LOGIC ---
+function toggleAutoExplore() {
+  if (gameLevel < 2) {
+    alert("Auto-Explore unlocks at Level 2!");
+    return;
+  }
+  
+  isAutoExploring = !isAutoExploring;
+  
+  if (isAutoExploring) {
+    btnAutoExplore.textContent = '🛑 Stop Auto-Explore';
+    btnAutoExplore.classList.add('active');
+    
+    // Clear the background layer completely to black to start "blank"
+    bgCtx.fillStyle = '#000000';
+    bgCtx.fillRect(0, 0, 256, 256);
+    
+    // Populate unvisited states randomly
+    unvisitedStates = [];
+    for (let i = 0; i < 65536; i++) unvisitedStates.push(i);
+    // Shuffle
+    for (let i = unvisitedStates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [unvisitedStates[i], unvisitedStates[j]] = [unvisitedStates[j], unvisitedStates[i]];
+    }
+    cometPath = [];
+    
+    // Stop blinking the selected input if exploring
+    if (blinkInterval) {
+      clearInterval(blinkInterval);
+      blinkInterval = null;
+    }
+    
+    // Compute lengths just in case
+    computeAllCycleLengths(4);
+    
+    autoExploreLoop();
+  } else {
+    btnAutoExplore.textContent = '🤖 Auto-Explore Fractal';
+    btnAutoExplore.classList.remove('active');
+    if (autoExploreReqId) cancelAnimationFrame(autoExploreReqId);
+    
+    // Restart blink timer
+    if (gameLevel >= 2) {
+      blinkInterval = setInterval(() => {
+        blinkState = !blinkState;
+        drawFractal();
+      }, 500);
+    }
+    drawFractal();
+  }
+}
+
+function autoExploreLoop() {
+  if (!isAutoExploring) return;
+  
+  // Trace a few paths per frame for high speed map forming
+  const SPEED = 25; // number of states fully explored per frame
+  let exploredCount = 0;
+  
+  while(unvisitedStates.length > 0 && exploredCount < SPEED) {
+    const startState = unvisitedStates.pop();
+    
+    let curr = startState;
+    const path = [];
+    const colorRGB = getCycleColorRGB(cycleLengths[startState]);
+    const fillStr = `rgb(${colorRGB[0]}, ${colorRGB[1]}, ${colorRGB[2]})`;
+    
+    // Trace 20 steps deep
+    for (let i = 0; i < 20; i++) {
+      path.push(curr);
+      const x = (curr >> 8) & 0xFF;
+      const y = curr & 0xFF;
+      
+      // Draw permanently on BG
+      bgCtx.fillStyle = fillStr;
+      bgCtx.fillRect(x, y, 1, 1);
+      
+      curr = stateToInt(runNRounds(intToState(curr), 4));
+    }
+    
+    cometPath = path; // The last path traced is what we draw as the comet tail
+    exploredCount++;
+  }
+  
+  if (unvisitedStates.length === 0) {
+    toggleAutoExplore(); // Stop when done
+    return;
+  }
+  
+  // Render
+  if (!canvasContext) canvasContext = fractalCanvas.getContext('2d');
+  
+  fractalCanvas.width = 1024;
+  fractalCanvas.height = 1024;
+  canvasContext.imageSmoothingEnabled = false;
+  
+  // Draw the Background map layer (4x scale)
+  canvasContext.clearRect(0, 0, 1024, 1024);
+  canvasContext.drawImage(bgCanvas, 0, 0, 1024, 1024);
+  
+
+  // Draw Comet Tail over everything (foreground layer)
+  for (let i = 0; i < cometPath.length; i++) {
+     const stateVal = cometPath[i];
+     const x = ((stateVal >> 8) & 0xFF) * 4;
+     const y = (stateVal & 0xFF) * 4;
+     
+     // Fade: 1.0 down to 0.1
+     const opacity = 1.0 - (i / cometPath.length);
+     canvasContext.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+     canvasContext.fillRect(x, y, 4, 4);
+  }
+  
+  // Highlight the current head
+  if (cometPath.length > 0) {
+     const head = cometPath[cometPath.length - 1];
+     const hx = ((head >> 8) & 0xFF) * 4;
+     const hy = (head & 0xFF) * 4;
+     canvasContext.fillStyle = '#fbbf24';
+     canvasContext.beginPath();
+     canvasContext.arc(hx + 2, hy + 2, 8, 0, 2 * Math.PI);
+     canvasContext.fill();
+     
+     // Update input state visually to match head!
+     inputState = intToState(head);
+     updateDiagram();
+  }
+  
+  autoExploreReqId = requestAnimationFrame(autoExploreLoop);
+}
+
+function toggleTraceMode() {
+  if (gameLevel < 2) {
+    alert("Trace Mode unlocks at Level 2!");
+    return;
+  }
+  
+  if (isAutoExploring) toggleAutoExplore();
+  
+  isTracing = !isTracing;
+  if (isTracing) {
+    btnTrace.textContent = '🛑 Stop Trace';
+    btnTrace.classList.add('active');
+    if (traceStats) traceStats.classList.remove('hidden');
+    
+    traceCurrentState = stateToInt(inputState);
+    traceIterationCount = 0;
+    traceRecentJumps = [];
+    cometPath = [];
+    
+    const hx = ((traceCurrentState >> 8) & 0xFF) * 4;
+    const hy = (traceCurrentState & 0xFF) * 4;
+    traceLastCoords = {x: hx, y: hy};
+    
+    // Clear the background to trace over
+    bgCtx.fillStyle = '#000000';
+    bgCtx.fillRect(0, 0, 256, 256);
+    
+    if (blinkInterval) {
+      clearInterval(blinkInterval);
+      blinkInterval = null;
+    }
+    
+    traceLoop();
+  } else {
+    btnTrace.textContent = '🔍 Trace Harmonic Orbit';
+    btnTrace.classList.remove('active');
+    if (traceStats) traceStats.classList.add('hidden');
+    if (traceReqId) clearTimeout(traceReqId);
+    
+    if (gameLevel >= 2) {
+      blinkInterval = setInterval(() => {
+        blinkState = !blinkState;
+        drawFractal();
+      }, 500);
+    }
+    drawFractal();
+  }
+}
+
+function traceLoop() {
+  if (!isTracing) return;
+  
+  const nextState = stateToInt(runNRounds(intToState(traceCurrentState), 4));
+  const hx = ((nextState >> 8) & 0xFF) * 4;
+  const hy = (nextState & 0xFF) * 4;
+  const newCoords = {x: hx, y: hy};
+  
+  // Update stats
+  const dx = newCoords.x - traceLastCoords.x;
+  const dy = newCoords.y - traceLastCoords.y;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  traceRecentJumps.push(dist);
+  if (traceRecentJumps.length > 3) traceRecentJumps.shift();
+  
+  const avgDist = traceRecentJumps.reduce((a,b) => a+b, 0) / traceRecentJumps.length;
+  traceIterationCount++;
+  
+  if (traceIters) traceIters.textContent = traceIterationCount;
+  if (traceDist) traceDist.textContent = avgDist.toFixed(1) + ' px';
+  
+  traceLastCoords = newCoords;
+  traceCurrentState = nextState;
+  
+  // Sync the SVG Diagram visually!
+  inputState = intToState(nextState);
+  recomputeAll();
+  
+  // Update comet path
+  cometPath.push(nextState);
+  if (cometPath.length > 25) cometPath.shift();
+  
+  // Render
+  if (!canvasContext) canvasContext = fractalCanvas.getContext('2d');
+  fractalCanvas.width = 1024;
+  fractalCanvas.height = 1024;
+  canvasContext.imageSmoothingEnabled = false;
+  
+  canvasContext.clearRect(0, 0, 1024, 1024);
+  
+
+  // Draw Comet Tail over everything
+  for (let i = 0; i < cometPath.length; i++) {
+     const stateVal = cometPath[i];
+     const x = ((stateVal >> 8) & 0xFF) * 4;
+     const y = (stateVal & 0xFF) * 4;
+     
+     const opacity = 1.0 - (i / cometPath.length);
+     canvasContext.fillStyle = `rgba(99, 102, 241, ${opacity})`; // Indigo tail
+     canvasContext.fillRect(x, y, 6, 6);
+  }
+  
+  // Highlight the current head
+  if (cometPath.length > 0) {
+     const head = cometPath[cometPath.length - 1];
+     const hx2 = ((head >> 8) & 0xFF) * 4;
+     const hy2 = (head & 0xFF) * 4;
+     canvasContext.fillStyle = '#fbbf24';
+     canvasContext.beginPath();
+     canvasContext.arc(hx2 + 3, hy2 + 3, 12, 0, 2 * Math.PI);
+     canvasContext.fill();
+  }
+  
+  traceReqId = setTimeout(traceLoop, 400); // 400ms slow-motion step
 }
 
 function checkTargetCondition() {
@@ -721,9 +1301,39 @@ btnReset.addEventListener("click", () => {
   recomputeAll();
 });
 btnHash.addEventListener("click", hashState);
+btnAutoExplore.addEventListener("click", toggleAutoExplore);
+btnTrace.addEventListener("click", toggleTraceMode);
 btnNextLevel.addEventListener("click", nextLevel);
 btnRestart.addEventListener("click", resetLevelState);
 btnVictoryRestart.addEventListener("click", saveScoreAndRestart);
+
+
+// Cipher Parameter Toggles
+function handleParameterChange() {
+  enableRotations = toggleRotations.checked;
+  enableLogic = toggleLogic.checked;
+  enableConstants = toggleConstants.checked;
+  
+  // Wipe and recalculate everything since the topology just changed
+  cycleLengths = null;
+  cycleLengthsRoundCount = 0;
+  inputState = [0, 0, 0, 0, 0, 0, 0, 0];
+  
+  if (isAutoExploring) {
+    toggleAutoExplore(); // stop if running
+  }
+  
+  // reset visuals
+  if (bgCanvas) {
+    bgCtx.clearRect(0, 0, 1024, 1024);
+  }
+  cometPath = [];
+  recomputeAll();
+}
+
+if (toggleRotations) toggleRotations.addEventListener('change', handleParameterChange);
+if (toggleLogic) toggleLogic.addEventListener('change', handleParameterChange);
+if (toggleConstants) toggleConstants.addEventListener('change', handleParameterChange);
 
 // Level Selector buttons binding
 document.getElementById('level-buttons-container').addEventListener('click', (e) => {
@@ -803,6 +1413,26 @@ if (fractalCanvas) {
       recomputeAll();
       drawFractal();
     }
+  });
+}
+
+// Algorithm Switcher binding
+const algoSelect = document.getElementById('algo-select');
+if (algoSelect) {
+  algoSelect.addEventListener('change', (e) => {
+    currentAlgorithm = e.target.value;
+    
+    // Reset cycle lengths cache
+    cycleLengths = null;
+    cycleLengthsRoundCount = 0;
+    
+    // Stop auto explore if running
+    if (isAutoExploring) {
+      toggleAutoExplore();
+    }
+    
+    // Reset game state and force diagram redraw
+    startGame();
   });
 }
 
