@@ -508,27 +508,32 @@ function openCompressorModal(r) {
   const maj_val = enableMaj ? maj(a, b, c) : 0;
   const T2 = (sig0_val + maj_val) % 4;
   
-  const colorFormat = (val) => `<span style="color: ${valueColors[val]}; font-weight: bold; padding: 0 2px;">${valueLabels[val]}</span>`;
+  const colorFormat = (val) => `<span style="color: ${valueColors[val]}; background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px;">${valueLabels[val]}</span>`;
   
-  let html = `<table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
-    <tr><td style="padding: 4px;"><strong>h:</strong></td><td style="padding: 4px;">${colorFormat(h)}</td></tr>
-    <tr><td style="padding: 4px;"><strong>Σ1(e):</strong></td><td style="padding: 4px;">${enableRotations ? colorFormat(sig1_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
-    <tr><td style="padding: 4px;"><strong>Ch(e,f,g):</strong></td><td style="padding: 4px;">${enableCh ? colorFormat(ch_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
-    <tr><td style="padding: 4px;"><strong>K:</strong></td><td style="padding: 4px;">${enableK ? colorFormat(k) : '<span style="color:#666;">Disabled</span>'}</td></tr>
-    <tr><td style="padding: 4px;"><strong>W:</strong></td><td style="padding: 4px;">${enableW ? colorFormat(w) : '<span style="color:#666;">Disabled</span>'}</td></tr>
-    <tr style="border-top: 1px solid #444;"><td style="padding: 4px; color: #ef4444; font-weight: bold;">T1:</td><td style="padding: 4px;">${colorFormat(T1)}</td></tr>
-  </table>`;
-
-  html += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-    <tr><td style="padding: 4px;"><strong>Σ0(a):</strong></td><td style="padding: 4px;">${enableRotations ? colorFormat(sig0_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
-    <tr><td style="padding: 4px;"><strong>Maj(a,b,c):</strong></td><td style="padding: 4px;">${enableMaj ? colorFormat(maj_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
-    <tr style="border-top: 1px solid #444;"><td style="padding: 4px; color: #10b981; font-weight: bold;">T2:</td><td style="padding: 4px;">${colorFormat(T2)}</td></tr>
-  </table>`;
-
-  html += `<div style="border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 10px; font-size: 0.95em;">
-    <strong>New A</strong> = (T1 + T2) mod 4 = (${colorFormat(T1)} + ${colorFormat(T2)}) mod 4 = ${colorFormat((T1 + T2) % 4)}<br>
-    <strong>New E</strong> = (D + T1) mod 4 = (${colorFormat(d)} + ${colorFormat(T1)}) mod 4 = ${colorFormat((d + T1) % 4)}
-  </div>`;
+  let html = `
+    <div style="color: var(--accent); margin-bottom: 8px; font-weight: bold; font-size: 1.1em;">Round ${r + 1} Compressor Math:</div>
+    <div><strong style="color: #ef4444;">T1</strong> = (H + &Sigma;1(E) + Ch(E,F,G) + K + W) mod 4</div>
+    <div style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 10px;">
+      H = ${colorFormat(h)}<br>
+      ${enableRotations ? `&Sigma;1(E) = &Sigma;1(${colorFormat(e)}) = ${colorFormat(sig1_val)}` : `&Sigma;1(E) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      ${enableCh ? `Ch(E,F,G) = Ch(${colorFormat(e)}, ${colorFormat(f)}, ${colorFormat(g)}) = ${colorFormat(ch_val)}` : `Ch(E,F,G) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      ${enableK ? `K = ${colorFormat(k)}` : `K = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      ${enableW ? `W = ${colorFormat(w)}` : `W = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      <strong style="color: #ef4444;">T1 = ${colorFormat(T1)}</strong>
+    </div>
+    
+    <div><strong style="color: #10b981;">T2</strong> = (&Sigma;0(A) + Maj(A,B,C)) mod 4</div>
+    <div style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 10px;">
+      ${enableRotations ? `&Sigma;0(A) = &Sigma;0(${colorFormat(a)}) = ${colorFormat(sig0_val)}` : `&Sigma;0(A) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      ${enableMaj ? `Maj(A,B,C) = Maj(${colorFormat(a)}, ${colorFormat(b)}, ${colorFormat(c)}) = ${colorFormat(maj_val)}` : `Maj(A,B,C) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
+      <strong style="color: #10b981;">T2 = ${colorFormat(T2)}</strong>
+    </div>
+    
+    <div style="border-top: 1px dashed var(--border); padding-top: 10px;">
+      <strong>New A</strong> = (<span style="color: #ef4444;">T1</span> + <span style="color: #10b981;">T2</span>) mod 4 = (${colorFormat(T1)} + ${colorFormat(T2)}) mod 4 = ${colorFormat((T1 + T2) % 4)}<br>
+      <strong>New E</strong> = (D + <span style="color: #ef4444;">T1</span>) mod 4 = (${colorFormat(d)} + ${colorFormat(T1)}) mod 4 = ${colorFormat((d + T1) % 4)}
+    </div>
+  `;
   
   const e_color = colorFormat(e);
   const rot1_e = colorFormat(rot1(e));
