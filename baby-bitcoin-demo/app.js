@@ -1,5 +1,5 @@
 // --- CRYPTO CONFIG & ARITHMETIC ---
-const K = [1, 2, 3, 0];
+const K = [1, 1, 2, 3]; // Cube root fractional parts of first 4 primes mod 4
 const H0 = [1, 2, 0, 2, 1, 2, 0, 1]; // Fractional primes mod 4
 const regNames = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const valueLabels = ['00', '01', '10', '11'];
@@ -42,11 +42,13 @@ let blinkInterval = null;
 // DOM Elements
 const btnGameMode = document.getElementById('btn-game-mode');
 const btnReset = document.getElementById('btn-reset');
+const btnLoadH0 = document.getElementById('btn-load-h0');
 const btnHash = document.getElementById('btn-hash');
 const btnNextLevel = document.getElementById('btn-next-level');
 const btnRestart = document.getElementById('btn-restart');
 const btnVictoryRestart = document.getElementById('btn-victory-restart');
-const btnAutoExplore = document.getElementById('btn-auto-explore');
+const btnAutoExploreFast = document.getElementById('btn-auto-explore-fast');
+const btnAutoExploreSlow = document.getElementById('btn-auto-explore-slow');
 const btnTrace = document.getElementById('btn-trace');
 const traceStats = document.getElementById('trace-stats');
 const traceIters = document.getElementById('trace-iters');
@@ -441,7 +443,12 @@ function handleNodeClick(r, c) {
   let text = '';
   
   if (r === 0) {
-    text = `<strong>Row 0, Register ${regName}:</strong> Currently holding ${colorSpan}. This is part of the initial state. In mining, this is the <em>Nonce</em> or input data we guess to find a target hash!`;
+    let extra = '';
+    const isH0Value = (val === H0[c]);
+    if (isH0Value) {
+      extra = ` This matches the standard H₀ constant for register ${regName} (derived from the square root of prime ${[2,3,5,7,11,13,17,19][c]}).`;
+    }
+    text = `<strong>Row 0, Register ${regName}:</strong> Currently holding ${colorSpan}.${extra} This is part of the starting register state. In mining, this is the <em>initial vector</em> or input state we change to find a target hash! Click 'Load H₀ Constants' to populate the starting state with nothing-up-my-sleeve values.`;
   } else {
     if (currentAlgorithm === 'AES') {
       text = `<strong>AES Mode, Register ${regName} (${colorSpan}):</strong> AES is built on a substitution-permutation network. Each 4-bit pair passes through an <em>S-Box</em> (non-linear substitution), then columns are swapped in <em>ShiftRows</em>, and finally XORed with the Round Key!`;
@@ -1039,61 +1046,102 @@ function drawFractal() {
   canvasContext.arc(cx + 2, cy + 2, 12, 0, 2 * Math.PI);
   canvasContext.fill();
   
-  canvasContext.strokeStyle = '#000000';
-  canvasContext.lineWidth = 4;
   canvasContext.stroke();
 }
 
 // --- AUTO-EXPLORE LOGIC ---
-function toggleAutoExplore() {
+let autoExploreSpeed = 'fast';
+
+function startAutoExplore(speed) {
+  isAutoExploring = true;
+  autoExploreSpeed = speed;
+  
+  updateAutoExploreButtonStates();
+  
+  // Clear the background layer completely to black to start "blank"
+  bgCtx.fillStyle = '#000000';
+  bgCtx.fillRect(0, 0, 256, 256);
+  
+  // Populate unvisited states randomly
+  unvisitedStates = [];
+  for (let i = 0; i < 65536; i++) unvisitedStates.push(i);
+  // Shuffle
+  for (let i = unvisitedStates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [unvisitedStates[i], unvisitedStates[j]] = [unvisitedStates[j], unvisitedStates[i]];
+  }
+  cometPath = [];
+  
+  // Stop blinking the selected input if exploring
+  if (blinkInterval) {
+    clearInterval(blinkInterval);
+    blinkInterval = null;
+  }
+  
+  // Compute lengths just in case
+  computeAllCycleLengths(4);
+  
+  autoExploreLoop();
+}
+
+function stopAutoExplore() {
+  isAutoExploring = false;
+  updateAutoExploreButtonStates();
+  
+  if (autoExploreReqId) cancelAnimationFrame(autoExploreReqId);
+  autoExploreReqId = null;
+  
+  // Restart blink timer
+  if (gameLevel >= 2) {
+    blinkInterval = setInterval(() => {
+      blinkState = !blinkState;
+      drawFractal();
+    }, 500);
+  }
+  drawFractal();
+}
+
+function updateAutoExploreButtonStates() {
+  const btnFast = document.getElementById('btn-auto-explore-fast');
+  const btnSlow = document.getElementById('btn-auto-explore-slow');
+  
+  if (!btnFast || !btnSlow) return;
+  
+  if (isAutoExploring) {
+    if (autoExploreSpeed === 'fast') {
+      btnFast.textContent = '🛑 Stop (Fast)';
+      btnFast.classList.add('active');
+      btnSlow.textContent = '🐢 Auto-Explore (Slow)';
+      btnSlow.classList.remove('active');
+    } else {
+      btnSlow.textContent = '🛑 Stop (Slow)';
+      btnSlow.classList.add('active');
+      btnFast.textContent = '⚡ Auto-Explore (Fast)';
+      btnFast.classList.remove('active');
+    }
+  } else {
+    btnFast.textContent = '⚡ Auto-Explore (Fast)';
+    btnFast.classList.remove('active');
+    btnSlow.textContent = '🐢 Auto-Explore (Slow)';
+    btnSlow.classList.remove('active');
+  }
+}
+
+function toggleAutoExplore(speed) {
   if (gameLevel < 2) {
     alert("Auto-Explore unlocks at Level 2!");
     return;
   }
   
-  isAutoExploring = !isAutoExploring;
-  
   if (isAutoExploring) {
-    btnAutoExplore.textContent = '🛑 Stop Auto-Explore';
-    btnAutoExplore.classList.add('active');
-    
-    // Clear the background layer completely to black to start "blank"
-    bgCtx.fillStyle = '#000000';
-    bgCtx.fillRect(0, 0, 256, 256);
-    
-    // Populate unvisited states randomly
-    unvisitedStates = [];
-    for (let i = 0; i < 65536; i++) unvisitedStates.push(i);
-    // Shuffle
-    for (let i = unvisitedStates.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [unvisitedStates[i], unvisitedStates[j]] = [unvisitedStates[j], unvisitedStates[i]];
+    if (autoExploreSpeed === speed) {
+      stopAutoExplore();
+    } else {
+      autoExploreSpeed = speed;
+      updateAutoExploreButtonStates();
     }
-    cometPath = [];
-    
-    // Stop blinking the selected input if exploring
-    if (blinkInterval) {
-      clearInterval(blinkInterval);
-      blinkInterval = null;
-    }
-    
-    // Compute lengths just in case
-    computeAllCycleLengths(4);
-    
-    autoExploreLoop();
   } else {
-    btnAutoExplore.textContent = '🤖 Auto-Explore Fractal';
-    btnAutoExplore.classList.remove('active');
-    if (autoExploreReqId) cancelAnimationFrame(autoExploreReqId);
-    
-    // Restart blink timer
-    if (gameLevel >= 2) {
-      blinkInterval = setInterval(() => {
-        blinkState = !blinkState;
-        drawFractal();
-      }, 500);
-    }
-    drawFractal();
+    startAutoExplore(speed);
   }
 }
 
@@ -1101,7 +1149,7 @@ function autoExploreLoop() {
   if (!isAutoExploring) return;
   
   // Trace a few paths per frame for high speed map forming
-  const SPEED = 25; // number of states fully explored per frame
+  const SPEED = autoExploreSpeed === 'fast' ? 25 : 1; // number of states fully explored per frame
   let exploredCount = 0;
   
   while(unvisitedStates.length > 0 && exploredCount < SPEED) {
@@ -1130,7 +1178,7 @@ function autoExploreLoop() {
   }
   
   if (unvisitedStates.length === 0) {
-    toggleAutoExplore(); // Stop when done
+    stopAutoExplore(); // Stop when done
     return;
   }
   
@@ -1144,6 +1192,7 @@ function autoExploreLoop() {
   // Draw the Background map layer (4x scale)
   canvasContext.clearRect(0, 0, 1024, 1024);
   canvasContext.drawImage(bgCanvas, 0, 0, 1024, 1024);
+  
   
 
   // Draw Comet Tail over everything (foreground layer)
@@ -1182,7 +1231,7 @@ function toggleTraceMode() {
     return;
   }
   
-  if (isAutoExploring) toggleAutoExplore();
+  if (isAutoExploring) stopAutoExplore();
   
   isTracing = !isTracing;
   if (isTracing) {
@@ -1361,8 +1410,22 @@ btnReset.addEventListener("click", () => {
   inputState = [0, 0, 0, 0, 0, 0, 0, 0];
   recomputeAll();
 });
+if (btnLoadH0) {
+  btnLoadH0.addEventListener("click", () => {
+    if (gameOver || levelComplete || gameBeaten) return;
+    inputState = [...H0];
+    recomputeAll();
+    
+    // Set explanation text explaining what H0 is
+    const explanationEl = document.getElementById('register-explanation');
+    if (explanationEl) {
+      explanationEl.innerHTML = `<strong>H₀ Constants Loaded!</strong> The starting registers have been initialized to H₀ = [1, 2, 0, 2, 1, 2, 0, 1]. In SHA-256, these initial register values are the fractional parts of the square roots of the first 8 primes (2, 3, 5, 7, 11, 13, 17, 19). They are "nothing-up-my-sleeve" numbers chosen to guarantee no backdoors!`;
+    }
+  });
+}
 btnHash.addEventListener("click", hashState);
-btnAutoExplore.addEventListener("click", toggleAutoExplore);
+if (btnAutoExploreFast) btnAutoExploreFast.addEventListener("click", () => toggleAutoExplore('fast'));
+if (btnAutoExploreSlow) btnAutoExploreSlow.addEventListener("click", () => toggleAutoExplore('slow'));
 btnTrace.addEventListener("click", toggleTraceMode);
 btnNextLevel.addEventListener("click", nextLevel);
 btnRestart.addEventListener("click", resetLevelState);
@@ -1383,7 +1446,7 @@ function handleParameterChange() {
   inputState = [0, 0, 0, 0, 0, 0, 0, 0];
   
   if (isAutoExploring) {
-    toggleAutoExplore(); // stop if running
+    stopAutoExplore(); // stop if running
   }
   
   recomputeAll();
@@ -1500,7 +1563,7 @@ if (algoSelect) {
     
     // Stop auto explore if running
     if (isAutoExploring) {
-      toggleAutoExplore();
+      stopAutoExplore();
     }
     
     // Reset game state and force diagram redraw
