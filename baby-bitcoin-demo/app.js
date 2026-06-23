@@ -464,6 +464,14 @@ function handleNodeClick(r, c) {
   explanationEl.innerHTML = text;
 }
 
+function syncToggles(source, targetId) {
+  const target = document.getElementById(targetId);
+  if (target) {
+    target.checked = source.checked;
+    target.dispatchEvent(new Event('change'));
+  }
+}
+
 function syncModalCheckboxes() {
   const modalRotations = document.getElementById('modal-toggle-rotations');
   const modalCh = document.getElementById('modal-toggle-ch');
