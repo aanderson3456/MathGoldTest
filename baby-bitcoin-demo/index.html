@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,26 +9,29 @@
   <!-- Premium Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
   <div class="game-wrapper">
     <!-- Header -->
     <header class="game-header">
-    <div class="header-content">
-      <div>
-        <h1><span>BabyBitcoin</span> Mining & Hashing</h1>
-        <p>A 2-bit word, 4-round facsimile of the SHA-256 block cipher used in Bitcoin consensus.</p>
+      <div class="header-content">
+        <div>
+          <h1><span>BabyBitcoin</span> Mining & Hashing</h1>
+          <p>A 2-bit word, 4-round facsimile of the SHA-256 block cipher used in Bitcoin consensus.</p>
+        </div>
+        <div class="algo-switcher">
+          <label for="algo-select">Algorithm:</label>
+          <select id="algo-select">
+            <option value="SHA256">SHA-256 (Plasma)</option>
+            <option value="AES">AES-Galois (Crystalline)</option>
+          </select>
+        </div>
       </div>
-      <div class="algo-switcher">
-        <label for="algo-select">Algorithm:</label>
-        <select id="algo-select">
-          <option value="SHA256">SHA-256 (Plasma)</option>
-          <option value="AES">AES-Galois (Crystalline)</option>
-        </select>
-      </div>
-    </div>
-  </header>
+    </header>
 
     <!-- Main Workspace -->
     <div class="workspace">
@@ -39,7 +43,7 @@
             <button id="btn-game-mode" class="btn primary-btn">🎮 Enter Game Mode</button>
             <button id="btn-reset" class="btn secondary-btn">🔄 Reset Input State</button>
           </div>
-          
+
           <div class="level-selector-wrapper">
             <label class="control-label">Active Block / Level:</label>
             <div class="level-buttons" id="level-buttons-container">
@@ -57,8 +61,11 @@
 
         <div id="panel-normal" class="stats-card" style="flex: 2; display: flex; flex-direction: column;">
           <h3>Interactive Mode</h3>
-          <p style="margin-bottom: 12px;">Click the registers in <strong>Row 0 (Input)</strong> to cycle their values. Watch the values mix and flow through the 4 rounds of cryptographic wiring to produce the final Hash output.</p>
-          <div id="register-explanation" style="margin-top: auto; padding: 12px; background: rgba(0,0,0,0.3); border-left: 3px solid var(--accent); border-radius: 4px; font-size: 0.95em; color: var(--text-secondary); min-height: 80px;">
+          <p style="margin-bottom: 12px;">Click the registers in <strong>Row 0 (Input)</strong> to cycle their values.
+            Watch the values mix and flow through the 4 rounds of cryptographic wiring to produce the final Hash output.
+          </p>
+          <div id="register-explanation"
+            style="margin-top: auto; padding: 12px; background: rgba(0,0,0,0.3); border-left: 3px solid var(--accent); border-radius: 4px; font-size: 0.95em; color: var(--text-secondary); min-height: 80px;">
             <em>Click any register node in the diagram below to reveal how its mathematical wiring works!</em>
           </div>
         </div>
@@ -71,14 +78,14 @@
                 <h3>Mining Block #<span id="hud-level">1</span></h3>
                 <div class="lives-display" id="hud-lives">❤️❤️❤️</div>
               </div>
-              
+
               <div class="target-box">
                 <h4>Target Difficulty:</h4>
                 <p id="hud-target-desc">Mine a block where register <strong>a</strong> is <strong>00</strong></p>
                 <div class="probability-label">Success Rate: <span id="hud-prob">25%</span></div>
               </div>
             </div>
-            
+
             <div style="flex: 1;">
               <div class="score-card">
                 <div class="score-item">
@@ -138,8 +145,9 @@
               <span class="dot val-giant"></span> Giant Orbits
             </div>
           </div>
-          
-          <div id="trace-stats" class="hidden" style="display: flex; gap: 20px; width: 100%; justify-content: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+
+          <div id="trace-stats" class="hidden"
+            style="display: flex; gap: 20px; width: 100%; justify-content: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
             <div style="text-align: center;">
               <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Iterations</div>
               <div id="trace-iters" style="font-size: 18px; font-weight: bold; color: var(--accent);">0</div>
@@ -151,12 +159,14 @@
           </div>
           <div style="display: flex; gap: 10px; margin-top: 15px; width: 100%;">
             <button id="btn-auto-explore" class="btn secondary-btn" style="flex: 1;">🤖 Auto-Explore</button>
-            <button id="btn-trace" class="btn secondary-btn" style="flex: 1; border-color: var(--accent); color: var(--accent);">🔍 Trace Orbit</button>
+            <button id="btn-trace" class="btn secondary-btn"
+              style="flex: 1; border-color: var(--accent); color: var(--accent);">🔍 Trace Orbit</button>
           </div>
         </div>
 
         <!-- Cipher Parameters -->
-        <div class="control-card" style="margin-top: 15px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+        <div class="control-card"
+          style="margin-top: 15px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
           <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--text-secondary);">Cipher Parameters</h3>
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9em; cursor: pointer;">
@@ -164,12 +174,20 @@
               Enable Rotations (Σ0, Σ1)
             </label>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9em; cursor: pointer;">
-              <input type="checkbox" id="toggle-logic" checked style="accent-color: var(--accent);">
-              Enable Non-Linear Logic (Ch, Maj)
+              <input type="checkbox" id="toggle-ch" checked style="accent-color: var(--accent);">
+              Enable Choose (Ch)
             </label>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9em; cursor: pointer;">
-              <input type="checkbox" id="toggle-constants" checked style="accent-color: var(--accent);">
-              Enable Constants (K, W)
+              <input type="checkbox" id="toggle-maj" checked style="accent-color: var(--accent);">
+              Enable Majority (Maj)
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9em; cursor: pointer;">
+              <input type="checkbox" id="toggle-k" checked style="accent-color: var(--accent);">
+              Enable Round Constants (K)
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9em; cursor: pointer;">
+              <input type="checkbox" id="toggle-w" checked style="accent-color: var(--accent);">
+              Enable Message Schedule (W)
             </label>
           </div>
         </div>
@@ -209,39 +227,90 @@
   <!-- Cotton Gin Compressor Modal -->
   <div id="modal-compressor" class="modal-overlay hidden">
     <div class="modal-content" style="max-width: 1050px; text-align: left; padding: 30px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px;">
         <h2 style="margin: 0; color: var(--gold);">⚙️ The Chaotic Compressor (T1 & T2)</h2>
-        <button onclick="document.getElementById('modal-compressor').classList.add('hidden')" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer;">&times;</button>
+        <button onclick="document.getElementById('modal-compressor').classList.add('hidden')"
+          style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer;">&times;</button>
       </div>
-      
+
       <div style="display: flex; gap: 30px; align-items: flex-start;">
         <!-- Left Column: Math Breakdown -->
         <div style="flex: 1.8;">
-          <p style="margin-top: 0;">In SHA-256, the true cryptographic security comes from the chaotic addition of intermediate values inside two compressor functions: <strong style="color: #ef4444;">T1</strong> and <strong style="color: #10b981;">T2</strong>. Let's break down the math for the round you clicked:</p>
-          
-          <div id="compressor-math" style="font-family: 'Courier New', Courier, monospace; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; font-size: 0.95em; line-height: 1.5;">
+          <p style="margin-top: 0;">In SHA-256, the true cryptographic security comes from the chaotic addition of
+            intermediate values inside two compressor functions: <strong style="color: #ef4444;">T1</strong> and <strong
+              style="color: #10b981;">T2</strong>. Let's break down the math for the round you clicked:</p>
+
+          <div id="compressor-math"
+            style="font-family: 'Courier New', Courier, monospace; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; font-size: 0.95em; line-height: 1.5;">
             <!-- Filled dynamically via JS -->
           </div>
           <div id="mini-diagram" style="margin-top: 20px;"></div>
         </div>
-        
+
         <!-- Right Column: Explainer -->
-        <div style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; font-size: 0.9em; line-height: 1.6; color: var(--text-secondary);">
-          <h3 style="color: var(--accent); margin-top: 0; margin-bottom: 12px; font-size: 1.1em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">What is a "Rotate"?</h3>
-          <p style="margin-top: 0;">In a 2-bit system, there are only two positions: a left bit and a right bit. A <strong>rotate</strong> shifts bits right, wrapping them back to the left edge.</p>
-          
+        <div
+          style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-size: 0.85em; line-height: 1.6; color: var(--text-secondary);">
+          <h3
+            style="color: var(--accent); margin-top: 0; margin-bottom: 12px; font-size: 1.1em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; display: flex; align-items: center;">
+            <input type="checkbox" id="modal-toggle-rotations" checked
+              style="accent-color: var(--accent); margin-right: 8px; cursor: pointer;"
+              onchange="syncToggles(this, 'toggle-rotations')">
+            What is a "Rotate"?
+          </h3>
+          <p style="margin-top: 0; margin-bottom: 6px;">In a 2-bit system, there are only two positions: a left bit and
+            a right bit. A <strong>rotate</strong> shifts bits right, wrapping them back to the left edge.</p>
+
           <div id="rotate-explainer-content"></div>
-          
-          <h3 style="color: var(--accent); margin-top: 25px; margin-bottom: 12px; font-size: 1.1em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Ch & Maj</h3>
+
+          <h3
+            style="color: var(--accent); margin-top: 15px; margin-bottom: 6px; font-size: 1.1em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; display: flex; align-items: center;">
+            Ch
+            <input type="checkbox" id="modal-toggle-ch" checked
+              style="accent-color: var(--accent); margin-left: 8px; margin-right: 8px; cursor: pointer;"
+              onchange="syncToggles(this, 'toggle-ch')">
+            & Maj
+            <input type="checkbox" id="modal-toggle-maj" checked
+              style="accent-color: var(--accent); margin-left: 8px; cursor: pointer;"
+              onchange="syncToggles(this, 'toggle-maj')">
+          </h3>
           <ul style="margin: 0; padding-left: 20px;">
-            <li style="margin-bottom: 8px;"><strong>Choose (Ch):</strong> Uses E's bits to act as a switch, picking bits from either F or G.</li>
-            <li><strong>Majority (Maj):</strong> Looks at A, B, and C <strong>bit-by-bit</strong>, and outputs whatever bit value (0 or 1) is in the majority for that specific position.</li>
+            <li style="margin-bottom: 4px;"><strong>Choose (Ch):</strong> Uses E's bits to act as a switch, picking bits
+              from either F or G.</li>
+            <li><strong>Majority (Maj):</strong> Looks at A, B, and C <strong>bit-by-bit</strong>, and outputs whatever
+              bit value (0 or 1) is in the majority for that specific position.</li>
           </ul>
+
+          <h3
+            style="color: var(--accent); margin-top: 15px; margin-bottom: 6px; font-size: 1.1em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; display: flex; align-items: center;">
+            K
+            <input type="checkbox" id="modal-toggle-k" checked
+              style="accent-color: var(--accent); margin-left: 8px; margin-right: 8px; cursor: pointer;"
+              onchange="syncToggles(this, 'toggle-k')">
+            & W
+            <input type="checkbox" id="modal-toggle-w" checked
+              style="accent-color: var(--accent); margin-left: 8px; cursor: pointer;"
+              onchange="syncToggles(this, 'toggle-w')">
+          </h3>
+          <ul style="margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 8px;"
+              title="In SHA-256, the initial state H0 is formed by taking the fractional parts of the square roots of the first 8 primes. The NSA called these 'nothing-up-my-sleeve' numbers, though prime numbers are obviously foundational to all of cryptography!">
+              <strong>Round Constants (K):</strong> Constants unique to each round, adding pseudo-random asymmetry to
+              the algorithm.</li>
+            <li
+              title="In real Bitcoin mining, the message being hashed is the 80-byte Block Header (which contains the Merkle Root of all transactions). This header is chopped into 16 equal 32-bit chunks. Those chunks form the initial W array and are mathematically expanded for the remaining rounds.">
+              <strong>Message Schedule (W):</strong> The actual message blocks (e.g. transaction data) being hashed,
+              broken into chunks.</li>
+          </ul>
+
+          <div id="compressor-explainer"
+            style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="app.js?v=35"></script>
+  <script src="app.js?v=40"></script>
 </body>
+
 </html>

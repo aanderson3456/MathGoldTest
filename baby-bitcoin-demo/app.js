@@ -1,6 +1,6 @@
 // --- CRYPTO CONFIG & ARITHMETIC ---
 const K = [1, 2, 3, 0];
-const W = [0, 1, 2, 3];
+const H0 = [1, 2, 0, 2, 1, 2, 0, 1]; // Fractional primes mod 4
 const regNames = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const valueLabels = ['00', '01', '10', '11'];
 const valueColors = ['#334155', '#0ea5e9', '#f97316', '#a855f7'];
@@ -16,8 +16,10 @@ let gameBeaten = false;
 
 // Cipher Parameters
 let enableRotations = true;
-let enableLogic = true;
-let enableConstants = true;
+let enableCh = true;
+let enableMaj = true;
+let enableK = true;
+let enableW = true;
 
 let hashesUsed = 0;
 let hashBudget = 10;
@@ -59,6 +61,7 @@ let traceCurrentState = 0;
 let traceIterationCount = 0;
 let traceRecentJumps = [];
 let traceLastCoords = null;
+let currentModalRound = null;
 
 let bgCanvas = document.createElement('canvas');
 bgCanvas.width = 256;
@@ -79,8 +82,10 @@ const hudHashes = document.getElementById('hud-hashes');
 const hudWasteCount = document.getElementById('hud-waste-count');
 
 const toggleRotations = document.getElementById('toggle-rotations');
-const toggleLogic = document.getElementById('toggle-logic');
-const toggleConstants = document.getElementById('toggle-constants');
+const toggleCh = document.getElementById('toggle-ch');
+const toggleMaj = document.getElementById('toggle-maj');
+const toggleK = document.getElementById('toggle-k');
+const toggleW = document.getElementById('toggle-w');
 const hudWasteBin = document.getElementById('hud-waste-bin');
 
 const modalSuccess = document.getElementById('modal-success');
@@ -123,13 +128,13 @@ let currentAlgorithm = 'SHA256';
 function computeRoundSHA(state, rKey, rWord) {
   const [a, b, c, d, e, f, g, h] = state;
   const sig1_val = enableRotations ? sig1(e) : 0;
-  const ch_val = enableLogic ? ch(e, f, g) : 0;
-  const rKey_val = enableConstants ? rKey : 0;
-  const rWord_val = enableConstants ? rWord : 0;
+  const ch_val = enableCh ? ch(e, f, g) : 0;
+  const rKey_val = enableK ? rKey : 0;
+  const rWord_val = enableW ? rWord : 0;
   const T1 = (h + sig1_val + ch_val + rKey_val + rWord_val) % 4;
   
   const sig0_val = enableRotations ? sig0(a) : 0;
-  const maj_val = enableLogic ? maj(a, b, c) : 0;
+  const maj_val = enableMaj ? maj(a, b, c) : 0;
   const T2 = (sig0_val + maj_val) % 4;
   
   return [
@@ -171,10 +176,13 @@ function computeRoundAES(state, rKey, rWord) {
     subState[4], subState[7], subState[2], subState[5]
   ];
   
+  const rKey_val = enableK ? rKey : 0;
+  const rWord_val = enableW ? rWord : 0;
+  
   // 3. AddRoundKey (XOR with key schedule)
   const finalState = [];
   for (let i = 0; i < 8; i++) {
-    const keyPart = (i % 2 === 0) ? rKey : rWord;
+    const keyPart = (i % 2 === 0) ? rKey_val : rWord_val;
     finalState.push(shiftState[i] ^ keyPart);
   }
   
@@ -225,7 +233,8 @@ function recomputeAll() {
   gridStates = [ [...inputState] ];
   let current = [...inputState];
   for (let r = 0; r < numRounds; r++) {
-    current = computeRound(current, K[r], W[r]);
+    const w_val = inputState[r % 8];
+    current = computeRound(current, K[r], w_val);
     gridStates.push(current);
   }
   updateDiagram();
@@ -455,56 +464,70 @@ function handleNodeClick(r, c) {
   explanationEl.innerHTML = text;
 }
 
+function syncModalCheckboxes() {
+  const modalRotations = document.getElementById('modal-toggle-rotations');
+  const modalCh = document.getElementById('modal-toggle-ch');
+  const modalMaj = document.getElementById('modal-toggle-maj');
+  const modalK = document.getElementById('modal-toggle-k');
+  const modalW = document.getElementById('modal-toggle-w');
+  
+  if (modalRotations) modalRotations.checked = enableRotations;
+  if (modalCh) modalCh.checked = enableCh;
+  if (modalMaj) modalMaj.checked = enableMaj;
+  if (modalK) modalK.checked = enableK;
+  if (modalW) modalW.checked = enableW;
+}
+
 function openCompressorModal(r) {
   if (currentAlgorithm !== 'SHA256') return;
+  currentModalRound = r;
+  
+  syncModalCheckboxes();
+  
   const state = gridStates[r];
   const [a, b, c, d, e, f, g, h] = state;
   
   // Get parameter variables
-  const k = enableConstants ? K[r] : 0;
-  const w = enableConstants ? W[r] : 0;
+  const k = enableK ? K[r] : 0;
+  const w = enableW ? inputState[r % 8] : 0;
     
   // Calculate intermediate values based on toggles
   const sig1_val = enableRotations ? sig1(e) : 0;
-  const ch_val = enableLogic ? ch(e, f, g) : 0;
+  const ch_val = enableCh ? ch(e, f, g) : 0;
   const T1 = (h + sig1_val + ch_val + k + w) % 4;
 
   const sig0_val = enableRotations ? sig0(a) : 0;
-  const maj_val = enableLogic ? maj(a, b, c) : 0;
+  const maj_val = enableMaj ? maj(a, b, c) : 0;
   const T2 = (sig0_val + maj_val) % 4;
   
-  const colorFormat = (val) => `<span style="color: ${valueColors[val]}; background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px;">${valueLabels[val]}</span>`;
+  const colorFormat = (val) => `<span style="color: ${valueColors[val]}; font-weight: bold; padding: 0 2px;">${valueLabels[val]}</span>`;
   
-  let html = `
-    <div style="color: var(--accent); margin-bottom: 8px; font-weight: bold; font-size: 1.1em;">Round ${r + 1} Compressor Math:</div>
-    <div><strong style="color: #ef4444;">T1</strong> = (H + &Sigma;1(E) + Ch(E,F,G) + K + W) mod 4</div>
-    <div style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 10px;">
-      H = ${colorFormat(h)}<br>
-      ${enableRotations ? `&Sigma;1(E) = &Sigma;1(${colorFormat(e)}) = ${colorFormat(sig1_val)}` : `&Sigma;1(E) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
-      ${enableLogic ? `Ch(E,F,G) = Ch(${colorFormat(e)}, ${colorFormat(f)}, ${colorFormat(g)}) = ${colorFormat(ch_val)}` : `Ch(E,F,G) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
-      ${enableConstants ? `K = ${colorFormat(k)}<br>W = ${colorFormat(w)}` : `K, W = <span style="color: #ef4444;">DISABLED</span> = 00, 00`}<br>
-      <strong style="color: #ef4444;">T1 = ${colorFormat(T1)}</strong>
-    </div>
-    
-    <div><strong style="color: #10b981;">T2</strong> = (&Sigma;0(A) + Maj(A,B,C)) mod 4</div>
-    <div style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 10px;">
-      ${enableRotations ? `&Sigma;0(A) = &Sigma;0(${colorFormat(a)}) = ${colorFormat(sig0_val)}` : `&Sigma;0(A) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
-      ${enableLogic ? `Maj(A,B,C) = Maj(${colorFormat(a)}, ${colorFormat(b)}, ${colorFormat(c)}) = ${colorFormat(maj_val)}` : `Maj(A,B,C) = <span style="color: #ef4444;">DISABLED</span> = 00`}<br>
-      <strong style="color: #10b981;">T2 = ${colorFormat(T2)}</strong>
-    </div>
-    
-    <div style="border-top: 1px dashed var(--border); padding-top: 10px;">
-      <strong>New A</strong> = (<span style="color: #ef4444;">T1</span> + <span style="color: #10b981;">T2</span>) mod 4 = (${colorFormat(T1)} + ${colorFormat(T2)}) mod 4 = ${colorFormat((T1 + T2) % 4)}<br>
-      <strong>New E</strong> = (D + <span style="color: #ef4444;">T1</span>) mod 4 = (${colorFormat(d)} + ${colorFormat(T1)}) mod 4 = ${colorFormat((d + T1) % 4)}
-    </div>
-  `;
+  let html = `<table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <tr><td style="padding: 4px;"><strong>h:</strong></td><td style="padding: 4px;">${colorFormat(h)}</td></tr>
+    <tr><td style="padding: 4px;"><strong>Σ1(e):</strong></td><td style="padding: 4px;">${enableRotations ? colorFormat(sig1_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
+    <tr><td style="padding: 4px;"><strong>Ch(e,f,g):</strong></td><td style="padding: 4px;">${enableCh ? colorFormat(ch_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
+    <tr><td style="padding: 4px;"><strong>K:</strong></td><td style="padding: 4px;">${enableK ? colorFormat(k) : '<span style="color:#666;">Disabled</span>'}</td></tr>
+    <tr><td style="padding: 4px;"><strong>W:</strong></td><td style="padding: 4px;">${enableW ? colorFormat(w) : '<span style="color:#666;">Disabled</span>'}</td></tr>
+    <tr style="border-top: 1px solid #444;"><td style="padding: 4px; color: #ef4444; font-weight: bold;">T1:</td><td style="padding: 4px;">${colorFormat(T1)}</td></tr>
+  </table>`;
+
+  html += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+    <tr><td style="padding: 4px;"><strong>Σ0(a):</strong></td><td style="padding: 4px;">${enableRotations ? colorFormat(sig0_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
+    <tr><td style="padding: 4px;"><strong>Maj(a,b,c):</strong></td><td style="padding: 4px;">${enableMaj ? colorFormat(maj_val) : '<span style="color:#666;">Disabled</span>'}</td></tr>
+    <tr style="border-top: 1px solid #444;"><td style="padding: 4px; color: #10b981; font-weight: bold;">T2:</td><td style="padding: 4px;">${colorFormat(T2)}</td></tr>
+  </table>`;
+
+  html += `<div style="border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 10px; font-size: 0.95em;">
+    <strong>New A</strong> = (T1 + T2) mod 4 = (${colorFormat(T1)} + ${colorFormat(T2)}) mod 4 = ${colorFormat((T1 + T2) % 4)}<br>
+    <strong>New E</strong> = (D + T1) mod 4 = (${colorFormat(d)} + ${colorFormat(T1)}) mod 4 = ${colorFormat((d + T1) % 4)}
+  </div>`;
   
   const e_color = colorFormat(e);
   const rot1_e = colorFormat(rot1(e));
   const rot2_e = colorFormat(rot2(e));
   const sig1_e = colorFormat(sig1(e));
   
-  const explainerHtml = `
+  const rotateExplainer = `
     <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; font-family: monospace; margin: 12px 0;">
       Example: E = ${e_color}<br><br>
       <strong>rot1</strong>(${valueLabels[e]}) = ${rot1_e} <em>(shifted 1)</em><br>
@@ -519,8 +542,32 @@ function openCompressorModal(r) {
     </div>
   `;
   
+  // Provide interactive visual feedback based on toggles
+  let explainerHtml = "";
+  if (!enableRotations) {
+    explainerHtml += `<div style="color:#fbbf24; margin-bottom: 5px;">⚠️ <strong>Rotations Disabled:</strong> The avalanche effect is broken. Bits no longer scatter properly!</div>`;
+  }
+  if (!enableCh || !enableMaj) {
+    explainerHtml += `<div style="color:#ef4444; margin-bottom: 5px;">⚠️ <strong>Non-Linearity Disabled:</strong> The hashing process is now linear and easily reversible!</div>`;
+  }
+  if (!enableK || !enableW) {
+    explainerHtml += `<div style="color:#a855f7; margin-bottom: 5px;">⚠️ <strong>External Mixins Disabled:</strong> The hash is isolated from the message (W) or the constants (K).</div>`;
+  }
+  if (enableRotations && enableCh && enableMaj && enableK && enableW) {
+    explainerHtml += `<div style="color:#22c55e;">✅ <strong>Full Chaos Active:</strong> The compressor is operating at maximum security!</div>`;
+  }
+  
+  // Also explain W and K if they are enabled
+  if (enableW) {
+    explainerHtml += `<div style="color:#93c5fd; margin-top: 10px;">ℹ️ <strong>Message Schedule (W):</strong> The actual message blocks (e.g. transaction data) being hashed, broken into chunks.</div>`;
+  }
+  if (enableK) {
+    explainerHtml += `<div style="color:#d8b4fe; margin-top: 5px;">ℹ️ <strong>Round Constants (K):</strong> Fixed mathematical constants injected into the algorithm to defend against certain patterns.</div>`;
+  }
+
   document.getElementById('compressor-math').innerHTML = html;
-  document.getElementById('rotate-explainer-content').innerHTML = explainerHtml;
+  document.getElementById('rotate-explainer-content').innerHTML = rotateExplainer;
+  document.getElementById('compressor-explainer').innerHTML = explainerHtml;
   
   drawMiniDiagram(r);
   
@@ -824,7 +871,8 @@ function getCycleColorRGB(length) {
 function runNRounds(state, n) {
   let curr = [...state];
   for (let r = 0; r < n; r++) {
-    curr = computeRound(curr, K[r % 4], W[r % 4]);
+    const w_val = state[r % 8];
+    curr = computeRound(curr, K[r % 4], w_val);
   }
   return curr;
 }
@@ -1311,8 +1359,10 @@ btnVictoryRestart.addEventListener("click", saveScoreAndRestart);
 // Cipher Parameter Toggles
 function handleParameterChange() {
   enableRotations = toggleRotations.checked;
-  enableLogic = toggleLogic.checked;
-  enableConstants = toggleConstants.checked;
+  enableCh = toggleCh ? toggleCh.checked : true;
+  enableMaj = toggleMaj ? toggleMaj.checked : true;
+  enableK = toggleK ? toggleK.checked : true;
+  enableW = toggleW ? toggleW.checked : true;
   
   // Wipe and recalculate everything since the topology just changed
   cycleLengths = null;
@@ -1323,17 +1373,26 @@ function handleParameterChange() {
     toggleAutoExplore(); // stop if running
   }
   
+  recomputeAll();
+  
+  // If the compressor modal is open, refresh it so the math/diagram updates instantly
+  const modal = document.getElementById('modal-compressor');
+  if (modal && !modal.classList.contains('hidden') && currentModalRound !== null) {
+    openCompressorModal(currentModalRound);
+  }
+  
   // reset visuals
   if (bgCanvas) {
     bgCtx.clearRect(0, 0, 1024, 1024);
   }
   cometPath = [];
-  recomputeAll();
 }
 
 if (toggleRotations) toggleRotations.addEventListener('change', handleParameterChange);
-if (toggleLogic) toggleLogic.addEventListener('change', handleParameterChange);
-if (toggleConstants) toggleConstants.addEventListener('change', handleParameterChange);
+if (toggleCh) toggleCh.addEventListener('change', handleParameterChange);
+if (toggleMaj) toggleMaj.addEventListener('change', handleParameterChange);
+if (toggleK) toggleK.addEventListener('change', handleParameterChange);
+if (toggleW) toggleW.addEventListener('change', handleParameterChange);
 
 // Level Selector buttons binding
 document.getElementById('level-buttons-container').addEventListener('click', (e) => {
