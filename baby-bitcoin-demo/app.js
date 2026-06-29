@@ -44,6 +44,7 @@ let hoveredState = null;
 let slowExploreCurr = null;
 let slowExplorePath = [];
 let slowExploreSteps = 0;
+let exploredFlags = new Uint8Array(65536);
 
 // DOM Elements
 const btnGameMode = document.getElementById('btn-game-mode');
@@ -951,7 +952,7 @@ function computeAllCycleLengths(numRounds) {
 }
 
 // --- KNN Constellation ---
-function drawKNNConstellation(ctx, centerInt, k = 50) {
+function drawKNNConstellation(ctx, centerInt, k = 50, restrictToVisited = false, forceInfiniteRadius = false) {
   if (centerInt === undefined || centerInt === null || !cycleLengths) return;
   
   const cx = (centerInt >> 8) & 0xFF;
@@ -960,6 +961,7 @@ function drawKNNConstellation(ctx, centerInt, k = 50) {
   
   const windowSize = 255; // Search the entire 256x256 canvas
   const candidates = [];
+  const radiusToCheck = forceInfiniteRadius ? 65536 : knnEquivalenceRadius;
   
   for (let dx = -windowSize; dx <= windowSize; dx++) {
     const x = cx + dx;
@@ -971,9 +973,11 @@ function drawKNNConstellation(ctx, centerInt, k = 50) {
       if (dx === 0 && dy === 0) continue;
       
       const stateVal = (x << 8) | y;
+      if (restrictToVisited && !exploredFlags[stateVal]) continue;
+      
       const cycleLen = cycleLengths[stateVal];
       const diff = Math.abs(cycleLen - targetCycleLen);
-      if (diff <= knnEquivalenceRadius) {
+      if (diff <= radiusToCheck) {
         const distSq = dx * dx + dy * dy;
         if (distSq < 64) continue; // Enforce minimum line length of 32 canvas pixels so they extend beyond the active cursor dot
         candidates.push({ x, y, distSq });
@@ -1151,6 +1155,7 @@ function startAutoExplore(speed) {
   slowExploreCurr = null;
   slowExplorePath = [];
   slowExploreSteps = 0;
+  exploredFlags.fill(0);
   
   // Stop blinking the selected input if exploring
   if (blinkInterval) {
@@ -1255,6 +1260,7 @@ function autoExploreLoop() {
     const y = slowExploreCurr & 0xFF;
     bgCtx.fillStyle = fillStr;
     bgCtx.fillRect(x, y, 1, 1);
+    exploredFlags[slowExploreCurr] = 1;
     
     cometPath = [...slowExplorePath];
     slowExploreCurr = stateToInt(runNRounds(intToState(slowExploreCurr), 4));
@@ -1284,6 +1290,7 @@ function autoExploreLoop() {
         // Draw permanently on BG
         bgCtx.fillStyle = fillStr;
         bgCtx.fillRect(x, y, 1, 1);
+        exploredFlags[curr] = 1;
         
         curr = stateToInt(runNRounds(intToState(curr), 4));
       }
@@ -1338,7 +1345,8 @@ function autoExploreLoop() {
      updateDiagram();
      
      if (gameLevel >= 2) {
-       drawKNNConstellation(canvasContext, head, 50);
+       const isSlow = autoExploreSpeed === 'slow';
+       drawKNNConstellation(canvasContext, head, 50, isSlow, isSlow);
      }
   }
   

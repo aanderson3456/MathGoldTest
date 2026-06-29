@@ -357,8 +357,12 @@ export class Snakey implements AfterViewInit {
         this.aiThinking = false;
         this.totalMoves = 0;
         this.showScoreSubmit = false;
+        this.firstMoveCenter = false;
         this.autoPlaying = false;
         if (this.autoPlayTimeout) clearTimeout(this.autoPlayTimeout);
+        
+        if (this.piecesG) this.piecesG.selectAll("*").remove();
+        if (this.winHighlightG) this.winHighlightG.selectAll("*").remove();
         
         this.drawGrid();
         this.drawPaving();
