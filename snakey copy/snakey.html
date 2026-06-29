@@ -1,0 +1,119 @@
+<header>
+    <div class="header-top">
+        <h1>SNAKEY</h1>
+        <button class="primary back-btn" (click)="goHome()">Back</button>
+    </div>
+    <p class="subtitle">Harary's Polyomino Achievement Game</p>
+    <p class="credits">Inspired by <a href="https://www.youtube.com/watch?v=ouTE-GYGIA8" target="_blank"
+            style="color: inherit; text-decoration: underline;">Numberphile & Sophie Maclean</a></p>
+</header>
+
+<main>
+    <div class="sidebar">
+        <div class="controls">
+            <div class="control-group">
+                <h3>Target Polyomino</h3>
+                <select id="shape-selector" (change)="onShapeChange($event)">
+                    <option value="Monomino">Monomino (n=1)</option>
+                    <option value="Domino">Domino (n=2)</option>
+                    <option value="Tromino_I">Straight Tromino (n=3)</option>
+                    <option value="Tromino_L">L-Tromino (n=3)</option>
+                    <option value="Tetromino_I">Straight Tetromino (n=4)</option>
+                    <option value="Tetromino_T">T-Tetromino (n=4)</option>
+                    <option value="Tetromino_L">L-Tetromino (n=4)</option>
+                    <option value="Tetromino_S">S-Tetromino (n=4)</option>
+                    <option value="Tetromino_O">Boxy (n=4, Loser!)</option>
+                    <option value="Pentomino_F" selected>F-Pentomino (n=5)</option>
+                    <option value="Snakey_Hexomino">Snakey Hexomino (n=6, Unsolved)</option>
+                </select>
+                <div id="shape-preview" class="shape-preview"></div>
+            </div>
+
+            <div class="control-group">
+                <h3>Game Mode</h3>
+                <select id="game-mode" (change)="onGameModeChange($event)">
+                    <option value="pvp">Player vs Player</option>
+                    <option value="p_vs_ai_random">Player (Maker) vs AI (Random)</option>
+                    <option value="p_vs_ai_optimal" selected>Player (Maker) vs AI (Optimal)</option>
+                    <option value="ai_random_vs_p">AI (Random) vs Player (Breaker)</option>
+                    <option value="ai_optimal_vs_p">AI (Optimal) vs Player (Breaker)</option>
+                    <option value="ai_optimal_vs_ai_optimal">AI (Optimal) vs AI (Optimal)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <h3>Game Rules</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;">
+                    <strong>Maker</strong> tries to build the target shape.<br>
+                    <strong>Breaker</strong> tries to prevent it.<br>
+                    Turns alternate. Maker goes first.
+                </p>
+            </div>
+
+            <div class="control-group">
+                <h3>Maker Color</h3>
+                <input type="text" [(ngModel)]="customMakerColor" (ngModelChange)="onMakerColorChange($event)"
+                    placeholder="e.g. #99FF00 or yellow" title="Choose Maker Color">
+            </div>
+
+            <div class="control-group">
+                <h3>Breaker Color</h3>
+                <input type="text" [(ngModel)]="customBreakerColor" (ngModelChange)="onBreakerColorChange($event)"
+                    placeholder="e.g. red or #FF0000" title="Choose Breaker Color">
+            </div>
+
+            <div class="control-group">
+                <button type="button" [class.compete-active]="competeMode" (click)="toggleCompeteMode()"
+                    style="background: linear-gradient(to right, #FFD700, #FFA500); color: #5a3e00; font-weight: 800; border: 2px solid #DAA520;">
+                    {{ competeMode ? '🏆 COMPETE MODE: ON' : '🏆 START COMPETE MODE' }}
+                </button>
+                <button id="reset-btn" class="primary" style="margin-top: 0.5rem;" (click)="resetGame()">Reset
+                    Game</button>
+                <button id="toggle-paving" style="margin-top: 0.5rem;" (click)="togglePaving()">{{showPaving ? 'Hide
+                    Paving Strategy' : 'Show Paving Strategy'}}</button>
+            </div>
+
+            <div *ngIf="showScoreSubmit" class="status-card"
+                style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #fbbf24;">
+                <div class="status-label" style="color: #92400e;">VICTORY ACHIEVED!</div>
+                <div class="status-value" style="color: #b45309; font-size: 1.5rem;">Score: {{ finalScore | number }}
+                </div>
+                <div style="margin-top: 1rem;">
+                    <input type="text" [(ngModel)]="playerName" placeholder="Enter Name (10 chars)" maxlength="10"
+                        style="margin-bottom: 0.5rem;">
+                    <button class="primary" (click)="submitScore()" [disabled]="submittingScore"
+                        style="background-color: #d97706;">
+                        {{ submittingScore ? 'Submitting...' : 'Submit to Hall of Fame' }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-label">Current Turn</div>
+                <div id="turn-display" class="status-value" [class]="'turn-' + currentTurn.toLowerCase()">
+                    {{turnDisplayText}}</div>
+            </div>
+
+            <div id="win-status" class="status-card" [style.display]="gameOver ? 'block' : 'none'"
+                style="border: 2px solid var(--accent-color);">
+                <div class="status-label">Result</div>
+                <div id="winner-name" class="status-value" style="color: var(--accent-color);">
+                    {{currentTurn.toUpperCase()}} WINS!</div>
+            </div>
+
+            <div class="control-group" style="margin-top: 1rem;">
+                <h3>Lean Formalization (AI Strategy)</h3>
+                <pre style="font-size: 0.75rem; background: #1e1e1e; color: #d4d4d4; padding: 0.5rem; border-radius: 4px; overflow-x: auto; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">{{ leanStrategyCode }}</pre>
+                <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--text-secondary);">Connected to <code>mathgod_lean/MathgodLean/SnakeyStrategy.lean</code>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="goal-banner">
+            <span class="goal-text">TARGET: {{targetShapeName.replace('_', ' ')}}</span>
+            <div id="shape-preview-main" class="shape-preview mini"></div>
+        </div>
+        <svg id="grid-svg"></svg>
+    </div>
+</main>

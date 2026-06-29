@@ -38,6 +38,12 @@ let cycleLengthsRoundCount = 0;
 let canvasContext = null;
 let blinkState = true;
 let blinkInterval = null;
+let cachedFractalCanvas = null;
+let knnEquivalenceRadius = 0;
+let hoveredState = null;
+let slowExploreCurr = null;
+let slowExplorePath = [];
+let slowExploreSteps = 0;
 
 // DOM Elements
 const btnGameMode = document.getElementById('btn-game-mode');
@@ -738,6 +744,13 @@ function exitGame() {
 }
 
 function resetLevelState() {
+  if (isAutoExploring) {
+    stopAutoExplore();
+  }
+  if (isTracing) {
+    toggleTraceMode();
+  }
+  
   lives = 3;
   gameOver = false;
   levelComplete = false;
@@ -937,6 +950,90 @@ function computeAllCycleLengths(numRounds) {
   }
 }
 
+// --- KNN Constellation ---
+function drawKNNConstellation(ctx, centerInt, k = 50) {
+  if (centerInt === undefined || centerInt === null || !cycleLengths) return;
+  
+  const cx = (centerInt >> 8) & 0xFF;
+  const cy = centerInt & 0xFF;
+  const targetCycleLen = cycleLengths[centerInt];
+  
+  const windowSize = 255; // Search the entire 256x256 canvas
+  const candidates = [];
+  
+  for (let dx = -windowSize; dx <= windowSize; dx++) {
+    const x = cx + dx;
+    if (x < 0 || x > 255) continue;
+    
+    for (let dy = -windowSize; dy <= windowSize; dy++) {
+      const y = cy + dy;
+      if (y < 0 || y > 255) continue;
+      if (dx === 0 && dy === 0) continue;
+      
+      const stateVal = (x << 8) | y;
+      const cycleLen = cycleLengths[stateVal];
+      const diff = Math.abs(cycleLen - targetCycleLen);
+      if (diff <= knnEquivalenceRadius) {
+        const distSq = dx * dx + dy * dy;
+        if (distSq < 64) continue; // Enforce minimum line length of 32 canvas pixels so they extend beyond the active cursor dot
+        candidates.push({ x, y, distSq });
+      }
+    }
+  }
+  
+  candidates.sort((a, b) => a.distSq - b.distSq);
+  const topK = candidates.slice(0, k);
+  const rgb = getCycleColorRGB(targetCycleLen);
+  
+  ctx.save();
+  ctx.lineCap = 'round';
+  
+  // Draw solid, fully opaque, thick lines in the matching orbit color
+  ctx.strokeStyle = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+  ctx.lineWidth = 3.5;
+  
+  topK.forEach(neighbor => {
+    // Draw the connection line
+    ctx.beginPath();
+    ctx.moveTo(cx * 4 + 2, cy * 4 + 2);
+    ctx.lineTo(neighbor.x * 4 + 2, neighbor.y * 4 + 2);
+    ctx.stroke();
+    
+    // Draw a bright white dot at the neighbor endpoint to make it stand out
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(neighbor.x * 4 + 2, neighbor.y * 4 + 2, 4, 0, 2 * Math.PI);
+    ctx.fill();
+  });
+  
+  ctx.restore();
+}
+
+function renderFractalToCache() {
+  cachedFractalCanvas = document.createElement('canvas');
+  cachedFractalCanvas.width = 256;
+  cachedFractalCanvas.height = 256;
+  const tempCtx = cachedFractalCanvas.getContext('2d');
+  
+  const imgData = tempCtx.createImageData(256, 256);
+  const data = imgData.data;
+  
+  for (let y = 0; y < 256; y++) {
+    for (let x = 0; x < 256; x++) {
+      const stateVal = (x << 8) | y;
+      const cycleLen = cycleLengths[stateVal];
+      const rgb = getCycleColorRGB(cycleLen);
+      
+      const idx = (y * 256 + x) * 4;
+      data[idx] = rgb[0];
+      data[idx+1] = rgb[1];
+      data[idx+2] = rgb[2];
+      data[idx+3] = 255;
+    }
+  }
+  tempCtx.putImageData(imgData, 0, 0);
+}
+
 function drawFractal() {
   if (gameLevel < 2) return;
   
@@ -947,14 +1044,13 @@ function drawFractal() {
   const numRounds = getNumRounds();
   computeAllCycleLengths(4); // Always display the full 4-round "crazy" fractal
   
-  // 3D perspective rotation: tilted at Level 2, straightens to head-on at Level 8
-  const levelRotations = [0, 0, 15, 11, 7, 5, 3, 1.5, 0];
-  const rot = levelRotations[gameLevel] || 0;
+  if (!cachedFractalCanvas) {
+    renderFractalToCache();
+  }
+  
   const wrapper = fractalCanvas.parentElement;
   if (wrapper) {
-    wrapper.style.transform = rot > 0
-      ? `perspective(600px) rotateY(${rot}deg) rotateZ(${rot * 0.3}deg)`
-      : '';
+    wrapper.style.transform = '';
     if (gameLevel >= 2 && gameLevel < 8) {
       wrapper.classList.add('emerging');
     } else {
@@ -990,37 +1086,13 @@ function drawFractal() {
     }
   }
   
-  // Render to a 1024x1024 canvas for ultra-sharp 3D CSS rotation
+  // Render to a 1024x1024 canvas
   fractalCanvas.width = 1024;
   fractalCanvas.height = 1024;
   
-  const offCanvas = document.createElement('canvas');
-  offCanvas.width = 256;
-  offCanvas.height = 256;
-  const offCtx = offCanvas.getContext('2d');
-  
-  const imgData = offCtx.createImageData(256, 256);
-  const data = imgData.data;
-  
-  for (let y = 0; y < 256; y++) {
-    for (let x = 0; x < 256; x++) {
-      const stateVal = (x << 8) | y;
-      const cycleLen = cycleLengths[stateVal];
-      const rgb = getCycleColorRGB(cycleLen);
-      
-      const idx = (y * 256 + x) * 4;
-      data[idx] = rgb[0];
-      data[idx+1] = rgb[1];
-      data[idx+2] = rgb[2];
-      data[idx+3] = 255;
-    }
-  }
-  
-  offCtx.putImageData(imgData, 0, 0);
-  
   canvasContext.imageSmoothingEnabled = false;
   canvasContext.clearRect(0, 0, 1024, 1024);
-  canvasContext.drawImage(offCanvas, 0, 0, 1024, 1024);
+  canvasContext.drawImage(cachedFractalCanvas, 0, 0, 1024, 1024);
   
 
   // Highlight wasted nonces as red dots
@@ -1047,6 +1119,11 @@ function drawFractal() {
   canvasContext.fill();
   
   canvasContext.stroke();
+
+  if (gameLevel >= 2) {
+    const activeStateVal = (hoveredState !== null) ? hoveredState : currentInt;
+    drawKNNConstellation(canvasContext, activeStateVal, 50);
+  }
 }
 
 // --- AUTO-EXPLORE LOGIC ---
@@ -1071,6 +1148,9 @@ function startAutoExplore(speed) {
     [unvisitedStates[i], unvisitedStates[j]] = [unvisitedStates[j], unvisitedStates[i]];
   }
   cometPath = [];
+  slowExploreCurr = null;
+  slowExplorePath = [];
+  slowExploreSteps = 0;
   
   // Stop blinking the selected input if exploring
   if (blinkInterval) {
@@ -1088,7 +1168,13 @@ function stopAutoExplore() {
   isAutoExploring = false;
   updateAutoExploreButtonStates();
   
-  if (autoExploreReqId) cancelAnimationFrame(autoExploreReqId);
+  if (autoExploreReqId) {
+    if (autoExploreSpeed === 'slow') {
+      clearTimeout(autoExploreReqId);
+    } else {
+      cancelAnimationFrame(autoExploreReqId);
+    }
+  }
   autoExploreReqId = null;
   
   // Restart blink timer
@@ -1148,38 +1234,68 @@ function toggleAutoExplore(speed) {
 function autoExploreLoop() {
   if (!isAutoExploring) return;
   
-  // Trace a few paths per frame for high speed map forming
-  const SPEED = autoExploreSpeed === 'fast' ? 25 : 1; // number of states fully explored per frame
-  let exploredCount = 0;
-  
-  while(unvisitedStates.length > 0 && exploredCount < SPEED) {
-    const startState = unvisitedStates.pop();
-    
-    let curr = startState;
-    const path = [];
-    const colorRGB = getCycleColorRGB(cycleLengths[startState]);
-    const fillStr = `rgb(${colorRGB[0]}, ${colorRGB[1]}, ${colorRGB[2]})`;
-    
-    // Trace 20 steps deep
-    for (let i = 0; i < 20; i++) {
-      path.push(curr);
-      const x = (curr >> 8) & 0xFF;
-      const y = curr & 0xFF;
-      
-      // Draw permanently on BG
-      bgCtx.fillStyle = fillStr;
-      bgCtx.fillRect(x, y, 1, 1);
-      
-      curr = stateToInt(runNRounds(intToState(curr), 4));
+  if (autoExploreSpeed === 'slow') {
+    if (slowExploreCurr === null) {
+      if (unvisitedStates.length === 0) {
+        stopAutoExplore();
+        return;
+      }
+      slowExploreCurr = unvisitedStates.pop();
+      slowExplorePath = [];
+      slowExploreSteps = 0;
     }
     
-    cometPath = path; // The last path traced is what we draw as the comet tail
-    exploredCount++;
-  }
-  
-  if (unvisitedStates.length === 0) {
-    stopAutoExplore(); // Stop when done
-    return;
+    const colorRGB = getCycleColorRGB(cycleLengths[slowExploreCurr]);
+    const fillStr = `rgb(${colorRGB[0]}, ${colorRGB[1]}, ${colorRGB[2]})`;
+    
+    slowExplorePath.push(slowExploreCurr);
+    if (slowExplorePath.length > 20) slowExplorePath.shift();
+    
+    const x = (slowExploreCurr >> 8) & 0xFF;
+    const y = slowExploreCurr & 0xFF;
+    bgCtx.fillStyle = fillStr;
+    bgCtx.fillRect(x, y, 1, 1);
+    
+    cometPath = [...slowExplorePath];
+    slowExploreCurr = stateToInt(runNRounds(intToState(slowExploreCurr), 4));
+    slowExploreSteps++;
+    
+    if (slowExploreSteps >= 20) {
+      slowExploreCurr = null;
+    }
+  } else {
+    const SPEED = 25; // fast mode traces 25 full paths per frame
+    let exploredCount = 0;
+    
+    while(unvisitedStates.length > 0 && exploredCount < SPEED) {
+      const startState = unvisitedStates.pop();
+      
+      let curr = startState;
+      const path = [];
+      const colorRGB = getCycleColorRGB(cycleLengths[startState]);
+      const fillStr = `rgb(${colorRGB[0]}, ${colorRGB[1]}, ${colorRGB[2]})`;
+      
+      // Trace 20 steps deep
+      for (let i = 0; i < 20; i++) {
+        path.push(curr);
+        const x = (curr >> 8) & 0xFF;
+        const y = curr & 0xFF;
+        
+        // Draw permanently on BG
+        bgCtx.fillStyle = fillStr;
+        bgCtx.fillRect(x, y, 1, 1);
+        
+        curr = stateToInt(runNRounds(intToState(curr), 4));
+      }
+      
+      cometPath = path; // The last path traced is what we draw as the comet tail
+      exploredCount++;
+    }
+    
+    if (unvisitedStates.length === 0) {
+      stopAutoExplore(); // Stop when done
+      return;
+    }
   }
   
   // Render
@@ -1220,9 +1336,17 @@ function autoExploreLoop() {
      // Update input state visually to match head!
      inputState = intToState(head);
      updateDiagram();
+     
+     if (gameLevel >= 2) {
+       drawKNNConstellation(canvasContext, head, 50);
+     }
   }
   
-  autoExploreReqId = requestAnimationFrame(autoExploreLoop);
+  if (autoExploreSpeed === 'slow') {
+    autoExploreReqId = setTimeout(autoExploreLoop, 1000); // 1000ms slow-motion step
+  } else {
+    autoExploreReqId = requestAnimationFrame(autoExploreLoop);
+  }
 }
 
 function toggleTraceMode() {
@@ -1335,6 +1459,10 @@ function traceLoop() {
      canvasContext.beginPath();
      canvasContext.arc(hx2 + 3, hy2 + 3, 12, 0, 2 * Math.PI);
      canvasContext.fill();
+     
+     if (gameLevel >= 2) {
+       drawKNNConstellation(canvasContext, head, 50);
+     }
   }
   
   traceReqId = setTimeout(traceLoop, 400); // 400ms slow-motion step
@@ -1387,6 +1515,22 @@ function saveScoreAndRestart() {
 }
 
 // --- INITIALIZE & EVENT LISTENERS ---
+const knnRadiusSlider = document.getElementById('knn-radius-slider');
+const knnRadiusVal = document.getElementById('knn-radius-val');
+if (knnRadiusSlider && knnRadiusVal) {
+  knnRadiusSlider.addEventListener('input', (e) => {
+    knnEquivalenceRadius = parseInt(e.target.value);
+    if (knnEquivalenceRadius === 0) {
+      knnRadiusVal.textContent = `±0 (Exact)`;
+    } else if (knnEquivalenceRadius >= 65000) {
+      knnRadiusVal.textContent = `Any Orbit (Connected)`;
+    } else {
+      knnRadiusVal.textContent = `±${knnEquivalenceRadius.toLocaleString()} states`;
+    }
+    drawFractal();
+  });
+}
+
 btnGameMode.addEventListener("click", () => {
   toggleGameMode();
   if (!isGameMode) {
@@ -1443,6 +1587,7 @@ function handleParameterChange() {
   // Wipe and recalculate everything since the topology just changed
   cycleLengths = null;
   cycleLengthsRoundCount = 0;
+  cachedFractalCanvas = null;
   inputState = [0, 0, 0, 0, 0, 0, 0, 0];
   
   if (isAutoExploring) {
@@ -1496,6 +1641,12 @@ if (fractalCanvas) {
     
     if (x >= 0 && x < 256 && y >= 0 && y < 256) {
       const val = (x << 8) | y;
+      
+      if (hoveredState !== val) {
+        hoveredState = val;
+        drawFractal();
+      }
+      
       const state = intToState(val);
       const cycleLen = cycleLengths[val];
       
@@ -1525,11 +1676,19 @@ if (fractalCanvas) {
       fractalTooltip.classList.remove('hidden');
     } else {
       fractalTooltip.classList.add('hidden');
+      if (hoveredState !== null) {
+        hoveredState = null;
+        drawFractal();
+      }
     }
   });
   
   fractalCanvas.addEventListener('mouseleave', () => {
     fractalTooltip.classList.add('hidden');
+    if (hoveredState !== null) {
+      hoveredState = null;
+      drawFractal();
+    }
   });
   
   fractalCanvas.addEventListener('click', (e) => {
@@ -1560,6 +1719,7 @@ if (algoSelect) {
     // Reset cycle lengths cache
     cycleLengths = null;
     cycleLengthsRoundCount = 0;
+    cachedFractalCanvas = null;
     
     // Stop auto explore if running
     if (isAutoExploring) {
