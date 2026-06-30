@@ -918,3 +918,1179 @@ INFO:     127.0.0.1:64643 - "GET /api/leaderboard HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64645 - "GET /api/leaderboard HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64648 - "GET /api/leaderboard HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64650 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64654 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64656 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64658 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64660 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64662 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64665 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64667 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64669 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64672 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64674 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64676 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64678 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64681 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64685 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64687 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64691 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64693 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64704 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64707 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64709 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64710 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64714 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64716 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64719 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64722 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64725 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64727 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64730 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64733 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64735 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64744 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64746 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64748 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64749 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64751 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64754 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64757 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64760 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64762 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64764 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64766 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64768 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64770 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64773 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64775 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64778 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64782 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64785 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64787 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64791 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64793 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64795 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64797 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64799 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64804 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64806 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64808 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64810 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64813 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64815 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64819 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64826 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64829 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64831 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64833 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64835 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64837 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64839 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64841 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64843 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64846 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64849 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64851 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64853 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64855 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64857 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64859 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64861 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64864 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64866 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64868 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64870 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64872 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64874 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64877 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64879 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64881 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64884 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64886 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64888 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64890 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64900 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64904 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64907 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64909 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64912 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64914 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64916 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64919 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64921 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64924 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64926 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64929 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64931 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64933 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64935 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64938 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64940 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64942 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64944 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64948 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64950 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64953 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64955 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64958 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64960 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64963 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64965 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64967 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64970 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64972 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64975 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64977 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64980 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64982 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64984 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64986 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64989 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64991 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64994 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64997 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64999 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65002 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65004 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65006 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65008 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65010 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65012 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65014 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65016 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65018 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65020 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65022 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65024 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65026 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65028 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65030 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65032 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65034 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65036 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65038 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65040 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65042 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65044 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65048 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65057 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65059 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65061 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65062 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65064 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65069 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65072 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65078 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65085 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65089 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65095 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65099 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65101 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65104 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65106 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65116 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65118 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65120 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65121 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65124 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65126 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65136 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65138 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65141 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65143 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65155 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65156 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65159 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65160 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65169 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65171 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65173 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65175 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65177 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65179 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65183 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65186 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65188 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65190 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65199 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65200 - "POST /api/generate-vibe-code HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65202 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65205 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65206 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65208 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65211 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65214 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65216 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65218 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65223 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65225 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65228 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65230 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65232 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65245 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65246 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65249 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65250 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65252 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65255 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65257 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65259 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65271 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65273 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65275 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65277 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65279 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65281 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65284 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65286 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65288 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65290 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65292 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65295 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65297 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65299 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65302 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65304 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65306 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65308 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65310 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65320 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65322 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65323 - "POST /api/generate-vibe-code HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65324 - "POST /api/submit-strategy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65325 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65328 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65329 - "POST /api/generate-vibe-code HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65330 - "POST /api/submit-strategy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65332 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65334 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1184.0, Challenger: 1216.0
+INFO:     127.0.0.1:65338 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65342 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65345 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1169.5, Challenger: 1230.5
+INFO:     127.0.0.1:65347 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65350 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1188.3, Challenger: 1211.7
+INFO:     127.0.0.1:65352 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65355 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:65357 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1226.7, VibePlayer: 1173.3
+INFO:     127.0.0.1:65359 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65361 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1224.2, VibePlayer: 1175.8
+INFO:     127.0.0.1:65363 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65365 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1238.0, VibePlayer: 1162.0
+INFO:     127.0.0.1:65368 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65371 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1181.4, Challenger: 1218.6
+INFO:     127.0.0.1:65374 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65377 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+INFO:     127.0.0.1:65379 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. VibePlayer: 1199.1, Challenger: 1200.9
+INFO:     127.0.0.1:65381 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65384 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1216.8, VibePlayer: 1183.2
+INFO:     127.0.0.1:65387 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65389 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1199.2, VibePlayer: 1200.8
+INFO:     127.0.0.1:65391 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65394 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1216.7, Challenger: 1183.3
+INFO:     127.0.0.1:65396 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65398 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1168.8, VibePlayer: 1231.2
+INFO:     127.0.0.1:65401 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65404 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1155.7, VibePlayer: 1244.3
+INFO:     127.0.0.1:65406 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65408 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1224.3, Challenger: 1175.7
+INFO:     127.0.0.1:65410 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65412 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1161.9, VibePlayer: 1238.1
+INFO:     127.0.0.1:65414 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65416 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1181.4, VibePlayer: 1218.6
+INFO:     127.0.0.1:65419 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65422 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1199.1, VibePlayer: 1200.9
+INFO:     127.0.0.1:65425 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65428 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1183.2, VibePlayer: 1216.8
+INFO:     127.0.0.1:65431 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65433 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1199.3, Challenger: 1200.7
+INFO:     127.0.0.1:65435 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65439 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1215.4, Challenger: 1184.6
+INFO:     127.0.0.1:65441 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65443 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1202.0, VibePlayer: 1198.0
+INFO:     127.0.0.1:65445 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65448 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1217.9, VibePlayer: 1182.1
+INFO:     127.0.0.1:65451 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65453 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1167.8, Challenger: 1232.2
+INFO:     127.0.0.1:65455 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65458 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:65460 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1213.3, VibePlayer: 1186.7
+INFO:     127.0.0.1:65463 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65465 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1228.1, VibePlayer: 1171.9
+INFO:     127.0.0.1:65467 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65469 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1158.5, Challenger: 1241.5
+INFO:     127.0.0.1:65471 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65473 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1253.8, VibePlayer: 1146.2
+INFO:     127.0.0.1:65475 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65477 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+INFO:     127.0.0.1:65480 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. VibePlayer: 1167.0, Challenger: 1233.0
+INFO:     127.0.0.1:65482 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65484 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1186.0, Challenger: 1214.0
+INFO:     127.0.0.1:65486 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65490 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1171.3, Challenger: 1228.7
+INFO:     127.0.0.1:65492 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65494 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1173.9, Challenger: 1226.1
+INFO:     127.0.0.1:65507 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65510 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1160.3, Challenger: 1239.7
+INFO:     127.0.0.1:65512 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65515 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1147.9, Challenger: 1252.1
+INFO:     127.0.0.1:65517 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65519 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1136.6, Challenger: 1263.4
+INFO:     127.0.0.1:65521 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65524 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1126.2, Challenger: 1273.8
+INFO:     127.0.0.1:65526 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65529 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1116.6, Challenger: 1283.4
+INFO:     127.0.0.1:65531 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65533 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1292.3, VibePlayer: 1107.7
+INFO:     127.0.0.1:65535 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1131.5, Challenger: 1268.5
+INFO:     127.0.0.1:49156 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49158 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1137.5, Challenger: 1262.5
+INFO:     127.0.0.1:49160 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49162 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1159.0, Challenger: 1241.0
+INFO:     127.0.0.1:49164 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49166 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1178.7, Challenger: 1221.3
+INFO:     127.0.0.1:49168 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49171 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1203.3, VibePlayer: 1196.7
+INFO:     127.0.0.1:49173 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49175 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1219.0, VibePlayer: 1181.0
+INFO:     127.0.0.1:49180 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49183 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1233.3, VibePlayer: 1166.7
+INFO:     127.0.0.1:49185 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49188 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49190 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1246.2, VibePlayer: 1153.8
+INFO:     127.0.0.1:49193 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49195 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1226.1, VibePlayer: 1173.9
+INFO:     127.0.0.1:49197 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49199 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1239.7, VibePlayer: 1160.3
+INFO:     127.0.0.1:49203 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49212 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1179.9, Challenger: 1220.1
+INFO:     127.0.0.1:49215 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49217 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+INFO:     127.0.0.1:49220 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. VibePlayer: 1197.7, Challenger: 1202.3
+INFO:     127.0.0.1:49222 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49225 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1214.0, Challenger: 1186.0
+INFO:     127.0.0.1:49227 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49229 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1196.7, Challenger: 1203.3
+INFO:     127.0.0.1:49231 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49234 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1187.0, VibePlayer: 1213.0
+INFO:     127.0.0.1:49236 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49239 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1172.2, VibePlayer: 1227.8
+INFO:     127.0.0.1:49241 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49243 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1241.2, Challenger: 1158.8
+INFO:     127.0.0.1:49245 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49248 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1178.5, VibePlayer: 1221.5
+INFO:     127.0.0.1:49250 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49253 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1196.5, VibePlayer: 1203.5
+INFO:     127.0.0.1:49255 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49258 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1212.8, VibePlayer: 1187.2
+INFO:     127.0.0.1:49260 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49262 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1227.6, VibePlayer: 1172.4
+INFO:     127.0.0.1:49264 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49266 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1209.1, VibePlayer: 1190.9
+INFO:     127.0.0.1:49269 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49271 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1175.8, Challenger: 1224.2
+INFO:     127.0.0.1:49273 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49277 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1222.0, VibePlayer: 1178.0
+INFO:     127.0.0.1:49279 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49281 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1204.0, VibePlayer: 1196.0
+INFO:     127.0.0.1:49283 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49285 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1219.6, VibePlayer: 1180.4
+INFO:     127.0.0.1:49287 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49289 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1166.2, Challenger: 1233.8
+INFO:     127.0.0.1:49292 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49295 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1185.2, Challenger: 1214.8
+INFO:     127.0.0.1:49297 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49299 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49303 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1229.4, VibePlayer: 1170.6
+INFO:     127.0.0.1:49306 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49308 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1210.7, VibePlayer: 1189.3
+INFO:     127.0.0.1:49311 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49314 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1209.7, VibePlayer: 1190.3
+INFO:     127.0.0.1:49317 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49319 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+INFO:     127.0.0.1:49322 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. VibePlayer: 1175.2, Challenger: 1224.8
+INFO:     127.0.0.1:49324 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49327 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1238.6, VibePlayer: 1161.4
+INFO:     127.0.0.1:49330 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49333 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1180.9, Challenger: 1219.1
+INFO:     127.0.0.1:49336 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1198.7, Challenger: 1201.3
+INFO:     127.0.0.1:49342 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1182.8, Challenger: 1217.2
+INFO:     127.0.0.1:49344 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1199.6, VibePlayer: 1200.4
+INFO:     127.0.0.1:49351 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1215.7, VibePlayer: 1184.3
+INFO:     127.0.0.1:49362 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49363 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49364 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1201.8, Challenger: 1198.2
+INFO:     127.0.0.1:49367 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1182.4, VibePlayer: 1217.6
+INFO:     127.0.0.1:49370 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49371 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49372 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1232.0, Challenger: 1168.0
+INFO:     127.0.0.1:49375 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1229.1, Challenger: 1170.9
+INFO:     127.0.0.1:49378 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1242.4, Challenger: 1157.6
+INFO:     127.0.0.1:49380 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1222.6, Challenger: 1177.4
+INFO:     127.0.0.1:49383 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1236.5, Challenger: 1163.5
+INFO:     127.0.0.1:49386 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1150.8, VibePlayer: 1249.2
+INFO:     127.0.0.1:49388 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49390 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1139.2, VibePlayer: 1260.8
+INFO:     127.0.0.1:49392 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1271.4, Challenger: 1128.6
+INFO:     127.0.0.1:49396 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1249.2, Challenger: 1150.8
+INFO:     127.0.0.1:49402 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1139.2, VibePlayer: 1260.8
+INFO:     127.0.0.1:49404 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1160.6, VibePlayer: 1239.4
+INFO:     127.0.0.1:49412 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1180.2, VibePlayer: 1219.8
+INFO:     127.0.0.1:49417 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1166.0, VibePlayer: 1234.0
+INFO:     127.0.0.1:49420 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1230.9, Challenger: 1169.1
+INFO:     127.0.0.1:49422 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1244.1, Challenger: 1155.9
+INFO:     127.0.0.1:49424 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1224.1, Challenger: 1175.9
+INFO:     127.0.0.1:49426 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1237.9, Challenger: 1162.1
+INFO:     127.0.0.1:49428 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1149.5, VibePlayer: 1250.5
+INFO:     127.0.0.1:49430 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1138.0, VibePlayer: 1262.0
+INFO:     127.0.0.1:49433 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1256.5, Challenger: 1143.5
+INFO:     127.0.0.1:49435 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1164.5, VibePlayer: 1235.5
+INFO:     127.0.0.1:49437 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1183.8, VibePlayer: 1216.2
+INFO:     127.0.0.1:49439 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1230.7, Challenger: 1169.3
+INFO:     127.0.0.1:49441 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1243.9, Challenger: 1156.1
+INFO:     127.0.0.1:49444 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1256.0, Challenger: 1144.0
+INFO:     127.0.0.1:49447 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1267.0, Challenger: 1133.0
+INFO:     127.0.0.1:49449 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1277.1, Challenger: 1122.9
+INFO:     127.0.0.1:49452 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49464 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1113.6, VibePlayer: 1286.4
+INFO:     127.0.0.1:49466 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1104.9, VibePlayer: 1295.1
+INFO:     127.0.0.1:49468 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1271.1, Challenger: 1128.9
+INFO:     127.0.0.1:49471 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1151.1, VibePlayer: 1248.9
+INFO:     127.0.0.1:49474 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1260.5, Challenger: 1139.5
+INFO:     127.0.0.1:49477 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1160.9, VibePlayer: 1239.1
+INFO:     127.0.0.1:49482 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1180.4, VibePlayer: 1219.6
+INFO:     127.0.0.1:49484 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1201.8, Challenger: 1198.2
+INFO:     127.0.0.1:49487 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1185.6, Challenger: 1214.4
+INFO:     127.0.0.1:49491 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1203.0, Challenger: 1197.0
+INFO:     127.0.0.1:49493 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1213.3, VibePlayer: 1186.7
+INFO:     127.0.0.1:49495 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1203.9, Challenger: 1196.1
+INFO:     127.0.0.1:49497 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1180.5, VibePlayer: 1219.5
+INFO:     127.0.0.1:49500 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1201.8, Challenger: 1198.2
+INFO:     127.0.0.1:49502 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1182.4, VibePlayer: 1217.6
+INFO:     127.0.0.1:49505 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1200.0, VibePlayer: 1200.0
+INFO:     127.0.0.1:49508 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1216.0, VibePlayer: 1184.0
+INFO:     127.0.0.1:49511 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1230.5, VibePlayer: 1169.5
+INFO:     127.0.0.1:49514 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1243.8, VibePlayer: 1156.2
+INFO:     127.0.0.1:49517 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1176.2, Challenger: 1223.8
+INFO:     127.0.0.1:49519 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49523 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1221.6, VibePlayer: 1178.4
+INFO:     127.0.0.1:49526 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1196.3, Challenger: 1203.7
+INFO:     127.0.0.1:49528 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1212.7, Challenger: 1187.3
+INFO:     127.0.0.1:49532 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1227.5, Challenger: 1172.5
+INFO:     127.0.0.1:49534 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1209.0, Challenger: 1191.0
+INFO:     127.0.0.1:49536 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1191.8, VibePlayer: 1208.2
+INFO:     127.0.0.1:49539 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1223.4, Challenger: 1176.6
+INFO:     127.0.0.1:49541 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1194.7, VibePlayer: 1205.3
+INFO:     127.0.0.1:49544 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1220.8, Challenger: 1179.2
+INFO:     127.0.0.1:49546 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1197.1, VibePlayer: 1202.9
+INFO:     127.0.0.1:49548 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1218.6, Challenger: 1181.4
+INFO:     127.0.0.1:49550 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1199.1, VibePlayer: 1200.9
+INFO:     127.0.0.1:49553 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1183.2, VibePlayer: 1216.8
+INFO:     127.0.0.1:49555 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1199.3, Challenger: 1200.7
+INFO:     127.0.0.1:49558 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1216.7, VibePlayer: 1183.3
+INFO:     127.0.0.1:49560 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1168.9, Challenger: 1231.1
+INFO:     127.0.0.1:49562 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1155.7, Challenger: 1244.3
+INFO:     127.0.0.1:49565 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1159.7, Challenger: 1240.3
+INFO:     127.0.0.1:49568 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1220.6, VibePlayer: 1179.4
+INFO:     127.0.0.1:49570 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1165.2, Challenger: 1234.8
+INFO:     127.0.0.1:49572 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1247.6, VibePlayer: 1152.4
+INFO:     127.0.0.1:49574 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49585 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1227.3, VibePlayer: 1172.7
+INFO:     127.0.0.1:49587 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1208.8, VibePlayer: 1191.2
+INFO:     127.0.0.1:49589 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1224.0, VibePlayer: 1176.0
+INFO:     127.0.0.1:49591 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1237.8, VibePlayer: 1162.2
+INFO:     127.0.0.1:49594 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1250.4, VibePlayer: 1149.6
+INFO:     127.0.0.1:49597 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1229.9, VibePlayer: 1170.1
+INFO:     127.0.0.1:49599 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1188.9, Challenger: 1211.1
+INFO:     127.0.0.1:49601 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1205.9, Challenger: 1194.1
+INFO:     127.0.0.1:49603 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1221.3, Challenger: 1178.7
+INFO:     127.0.0.1:49605 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1180.6, VibePlayer: 1219.4
+INFO:     127.0.0.1:49607 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1233.6, Challenger: 1166.4
+INFO:     127.0.0.1:49609 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1185.5, VibePlayer: 1214.5
+INFO:     127.0.0.1:49612 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1202.8, VibePlayer: 1197.2
+INFO:     127.0.0.1:49614 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1218.5, VibePlayer: 1181.5
+INFO:     127.0.0.1:49616 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1232.8, VibePlayer: 1167.2
+INFO:     127.0.0.1:49618 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1229.8, VibePlayer: 1170.2
+INFO:     127.0.0.1:49620 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1211.1, VibePlayer: 1188.9
+INFO:     127.0.0.1:49632 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1205.9, Challenger: 1194.1
+INFO:     127.0.0.1:49635 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1178.6, VibePlayer: 1221.4
+INFO:     127.0.0.1:49638 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1196.6, VibePlayer: 1203.4
+INFO:     127.0.0.1:49640 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1187.1, Challenger: 1212.9
+INFO:     127.0.0.1:49642 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+INFO:     127.0.0.1:49644 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. VibePlayer: 1204.3, Challenger: 1195.7
+INFO:     127.0.0.1:49647 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1180.1, VibePlayer: 1219.9
+INFO:     127.0.0.1:49650 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1197.9, VibePlayer: 1202.1
+INFO:     127.0.0.1:49652 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1217.9, Challenger: 1182.1
+INFO:     127.0.0.1:49655 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1232.2, Challenger: 1167.8
+INFO:     127.0.0.1:49657 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1186.7, VibePlayer: 1213.3
+INFO:     127.0.0.1:49660 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1171.9, VibePlayer: 1228.1
+INFO:     127.0.0.1:49662 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1241.5, Challenger: 1158.5
+INFO:     127.0.0.1:49664 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1178.2, VibePlayer: 1221.8
+INFO:     127.0.0.1:49667 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1164.2, VibePlayer: 1235.8
+INFO:     127.0.0.1:49669 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1248.5, Challenger: 1151.5
+INFO:     127.0.0.1:49671 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1171.8, VibePlayer: 1228.2
+INFO:     127.0.0.1:49674 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1241.6, Challenger: 1158.4
+INFO:     127.0.0.1:49676 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1178.2, VibePlayer: 1221.8
+INFO:     127.0.0.1:49678 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1235.8, Challenger: 1164.2
+INFO:     127.0.0.1:49681 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1216.6, Challenger: 1183.4
+INFO:     127.0.0.1:49683 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1231.1, Challenger: 1168.9
+INFO:     127.0.0.1:49685 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1228.2, Challenger: 1171.8
+INFO:     127.0.0.1:49687 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1190.4, VibePlayer: 1209.6
+INFO:     127.0.0.1:49690 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1207.2, VibePlayer: 1192.8
+INFO:     127.0.0.1:49692 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1190.6, VibePlayer: 1209.4
+INFO:     127.0.0.1:49694 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+INFO:     127.0.0.1:49696 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. VibePlayer: 1192.6, Challenger: 1207.4
+INFO:     127.0.0.1:49699 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1177.2, Challenger: 1222.8
+INFO:     127.0.0.1:49702 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1236.7, VibePlayer: 1163.3
+INFO:     127.0.0.1:49705 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1150.7, Challenger: 1249.3
+INFO:     127.0.0.1:49710 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1139.1, Challenger: 1260.9
+INFO:     127.0.0.1:49712 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1271.5, VibePlayer: 1128.5
+INFO:     127.0.0.1:49718 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1249.3, VibePlayer: 1150.7
+INFO:     127.0.0.1:49721 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1244.9, VibePlayer: 1155.1
+INFO:     127.0.0.1:49724 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1224.8, VibePlayer: 1175.2
+INFO:     127.0.0.1:49727 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1161.4, Challenger: 1238.6
+INFO:     127.0.0.1:49729 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1148.9, Challenger: 1251.1
+INFO:     127.0.0.1:49732 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1169.5, Challenger: 1230.5
+INFO:     127.0.0.1:49734 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1188.3, Challenger: 1211.7
+INFO:     127.0.0.1:49736 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1205.4, Challenger: 1194.6
+INFO:     127.0.0.1:49740 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1220.9, Challenger: 1179.1
+INFO:     127.0.0.1:49742 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1197.0, VibePlayer: 1203.0
+INFO:     127.0.0.1:49756 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1218.7, Challenger: 1181.3
+INFO:     127.0.0.1:49758 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1167.0, VibePlayer: 1233.0
+INFO:     127.0.0.1:49761 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1154.0, VibePlayer: 1246.0
+INFO:     127.0.0.1:49763 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1174.2, VibePlayer: 1225.8
+INFO:     127.0.0.1:49766 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1160.5, VibePlayer: 1239.5
+INFO:     127.0.0.1:49773 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49775 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1148.1, VibePlayer: 1251.9
+INFO:     127.0.0.1:49777 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1168.7, VibePlayer: 1231.3
+INFO:     127.0.0.1:49780 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1187.6, VibePlayer: 1212.4
+INFO:     127.0.0.1:49782 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1195.3, Challenger: 1204.7
+INFO:     127.0.0.1:49785 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1188.3, VibePlayer: 1211.7
+INFO:     127.0.0.1:49787 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1194.6, Challenger: 1205.4
+INFO:     127.0.0.1:49789 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1179.1, Challenger: 1220.9
+INFO:     127.0.0.1:49791 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1165.0, Challenger: 1235.0
+INFO:     127.0.0.1:49794 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1184.2, Challenger: 1215.8
+INFO:     127.0.0.1:49797 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1169.7, Challenger: 1230.3
+INFO:     127.0.0.1:49799 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1211.6, VibePlayer: 1188.4
+INFO:     127.0.0.1:49810 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1173.5, Challenger: 1226.5
+INFO:     127.0.0.1:49812 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1240.1, VibePlayer: 1159.9
+INFO:     127.0.0.1:49814 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1147.5, Challenger: 1252.5
+INFO:     127.0.0.1:49816 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1231.8, VibePlayer: 1168.2
+INFO:     127.0.0.1:49819 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1155.1, Challenger: 1244.9
+INFO:     127.0.0.1:49821 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1224.8, VibePlayer: 1175.2
+INFO:     127.0.0.1:49823 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1161.4, Challenger: 1238.6
+INFO:     127.0.0.1:49826 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1219.1, VibePlayer: 1180.9
+INFO:     127.0.0.1:49828 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1198.7, Challenger: 1201.3
+INFO:     127.0.0.1:49830 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1185.2, VibePlayer: 1214.8
+INFO:     127.0.0.1:49832 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49835 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1170.6, VibePlayer: 1229.4
+INFO:     127.0.0.1:49838 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1210.8, Challenger: 1189.2
+INFO:     127.0.0.1:49840 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1225.8, Challenger: 1174.2
+INFO:     127.0.0.1:49843 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1239.4, Challenger: 1160.6
+INFO:     127.0.0.1:49849 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49858 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1251.8, Challenger: 1148.2
+INFO:     127.0.0.1:49861 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1231.2, Challenger: 1168.8
+INFO:     127.0.0.1:49863 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1212.4, Challenger: 1187.6
+INFO:     127.0.0.1:49865 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1172.8, VibePlayer: 1227.2
+INFO:     127.0.0.1:49867 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1191.3, VibePlayer: 1208.7
+INFO:     127.0.0.1:49869 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1176.1, VibePlayer: 1223.9
+INFO:     127.0.0.1:49871 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1194.3, VibePlayer: 1205.7
+INFO:     127.0.0.1:49873 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1194.8, VibePlayer: 1205.2
+INFO:     127.0.0.1:49875 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1195.3, VibePlayer: 1204.7
+INFO:     127.0.0.1:49877 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1220.3, Challenger: 1179.7
+INFO:     127.0.0.1:49879 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1234.4, Challenger: 1165.6
+INFO:     127.0.0.1:49881 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1231.3, Challenger: 1168.7
+INFO:     127.0.0.1:49883 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1171.5, VibePlayer: 1228.5
+INFO:     127.0.0.1:49885 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1190.1, VibePlayer: 1209.9
+INFO:     127.0.0.1:49887 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1207.1, VibePlayer: 1192.9
+INFO:     127.0.0.1:49889 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1190.4, VibePlayer: 1209.6
+INFO:     127.0.0.1:49891 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1192.7, Challenger: 1207.3
+INFO:     127.0.0.1:49893 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1177.4, Challenger: 1222.6
+INFO:     127.0.0.1:49895 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1236.5, VibePlayer: 1163.5
+INFO:     127.0.0.1:49897 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1249.2, VibePlayer: 1150.8
+INFO:     127.0.0.1:49899 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+INFO:     127.0.0.1:49901 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. Challenger: 1228.8, VibePlayer: 1171.2
+INFO:     127.0.0.1:49903 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1242.2, VibePlayer: 1157.8
+INFO:     127.0.0.1:49905 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1254.4, VibePlayer: 1145.6
+INFO:     127.0.0.1:49907 - "POST /api/generate-vibe-code HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49909 - "POST /api/evaluate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49911 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1134.5, Challenger: 1265.5
+INFO:     127.0.0.1:49920 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1140.2, Challenger: 1259.8
+INFO:     127.0.0.1:49923 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1270.5, VibePlayer: 1129.5
+INFO:     127.0.0.1:49925 - "POST /api/submit-strategy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49927 - "GET /api/leaderboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49929 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: testsbuitm vs Challenger
+Match done. testsbuitm: 1203.2, Challenger: 1267.3
+INFO:     127.0.0.1:49941 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1119.6, Challenger: 1277.2
+INFO:     127.0.0.1:49943 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1142.4, Challenger: 1254.4
+INFO:     127.0.0.1:49945 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs testsbuitm
+Match done. VibePlayer: 1129.1, testsbuitm: 1216.4
+INFO:     127.0.0.1:49948 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs testsbuitm
+Match done. VibePlayer: 1133.1, testsbuitm: 1212.5
+INFO:     127.0.0.1:49950 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs testsbuitm
+Match done. VibePlayer: 1152.7, testsbuitm: 1192.9
+INFO:     127.0.0.1:49952 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: testsbuitm vs VibePlayer
+Match done. testsbuitm: 1175.1, VibePlayer: 1170.5
+INFO:     127.0.0.1:49954 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1250.6, VibePlayer: 1174.3
+INFO:     127.0.0.1:49956 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1263.2, VibePlayer: 1161.8
+INFO:     127.0.0.1:49959 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs testsbuitm
+Match done. Challenger: 1243.2, testsbuitm: 1195.0
+INFO:     127.0.0.1:49961 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs testsbuitm
+Match done. VibePlayer: 1147.3, testsbuitm: 1209.5
+INFO:     127.0.0.1:49964 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+Match done. VibePlayer: 1167.6, Challenger: 1222.9
+INFO:     127.0.0.1:49968 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs testsbuitm
+Match done. Challenger: 1238.3, testsbuitm: 1194.1
+INFO:     127.0.0.1:49970 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: testsbuitm vs VibePlayer
+Match done. testsbuitm: 1176.9, VibePlayer: 1184.8
+INFO:     127.0.0.1:49976 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: Challenger vs VibePlayer
+Match done. Challenger: 1219.8, VibePlayer: 1203.3
+INFO:     127.0.0.1:49979 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs testsbuitm
+Match done. VibePlayer: 1218.1, testsbuitm: 1162.1
+INFO:     127.0.0.1:49982 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: VibePlayer vs Challenger
+INFO:     127.0.0.1:49988 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Match done. VibePlayer: 1202.1, Challenger: 1235.8
+INFO:     127.0.0.1:49997 - "GET /api/leaderboard HTTP/1.1" 200 OK
+Running match: testsbuitm vs Challenger
+Match done. testsbuitm: 1181.5, Challenger: 1216.4
+INFO:     127.0.0.1:49999 - "GET /api/leaderboard HTTP/1.1" 200 OK

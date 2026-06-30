@@ -803,15 +803,25 @@ export class Snakey implements AfterViewInit {
     }
 
     handleCellClick(x: number, y: number, isAI = false) {
-        if (this.gameOver) return;
+        console.log(`[handleCellClick] Clicked on cell (${x}, ${y}) - isAI: ${isAI}, currentTurn: ${this.currentTurn}, gameMode: ${this.gameMode}, gameOver: ${this.gameOver}`);
+        if (this.gameOver) {
+            console.log(`[handleCellClick] Ignored click because game is over.`);
+            return;
+        }
         
         const isMakerAITurn = (this.gameMode === 'ai_random_vs_p' || this.gameMode === 'ai_optimal_vs_p' || this.gameMode === 'ai_custom_vs_p' || this.gameMode === 'ai_custom_vs_ai_optimal' || this.gameMode === 'ai_optimal_vs_ai_custom' || this.gameMode === 'ai_optimal_vs_ai_optimal') && this.currentTurn === 'Maker';
         const isBreakerAITurn = (this.gameMode === 'p_vs_ai_random' || this.gameMode === 'p_vs_ai_optimal' || this.gameMode === 'p_vs_ai_custom' || this.gameMode === 'ai_custom_vs_ai_optimal' || this.gameMode === 'ai_optimal_vs_ai_custom' || this.gameMode === 'ai_optimal_vs_ai_optimal') && this.currentTurn === 'Breaker';
                          
-        if ((isMakerAITurn || isBreakerAITurn) && !isAI) return;
+        if ((isMakerAITurn || isBreakerAITurn) && !isAI) {
+            console.log(`[handleCellClick] Ignored click because it is AI's turn: isMakerAITurn=${isMakerAITurn}, isBreakerAITurn=${isBreakerAITurn}`);
+            return;
+        }
 
         const key = `${x},${y}`;
-        if (this.board[key]) return;
+        if (this.board[key]) {
+            console.log(`[handleCellClick] Ignored click because cell is already occupied: ${this.board[key]}`);
+            return;
+        }
 
         if (this.totalMoves === 0) {
             // Check if first move is in the 2x2 center of the 20x20 grid (x: 9 or 10, y: 9 or 10)
@@ -834,8 +844,10 @@ export class Snakey implements AfterViewInit {
             is_ai: isAI
         });
         
+        console.log(`[handleCellClick] Recorded move. isRecordingVibe: ${this.isRecordingVibe}`);
         if (this.isRecordingVibe) {
             this.pythonStrategyCode += `# Turn ${this.totalMoves + 1}: ${this.currentTurn} played at (${x}, ${y})\n`;
+            console.log(`[handleCellClick] Appended comment to pythonStrategyCode: Turn ${this.totalMoves + 1}`);
         }
         
         this.totalMoves++;
@@ -851,12 +863,14 @@ export class Snakey implements AfterViewInit {
                 this.pythonStrategyCode += `# Game Over! ${this.currentTurn} wins.\n`;
                 this.generateVibeCode();
             }
+            this.cdr.detectChanges();
             return;
         }
 
         this.currentTurn = this.currentTurn === 'Maker' ? 'Breaker' : 'Maker';
         
         this.checkAITurn();
+        this.cdr.detectChanges();
     }
 
     renderPieces() {
@@ -1120,11 +1134,13 @@ export class Snakey implements AfterViewInit {
                 } else {
                     alert('Error generating code: ' + (res.message || 'Unknown error'));
                 }
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 this.generatingVibeCode = false;
                 console.error(err);
                 alert('API Error during code generation.');
+                this.cdr.detectChanges();
             }
         });
     }
@@ -1152,11 +1168,13 @@ export class Snakey implements AfterViewInit {
                 } else {
                     alert('Error submitting strategy: ' + (res.message || 'Unknown error'));
                 }
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 this.submittingTournament = false;
                 console.error(err);
                 alert('API Error submitting strategy.');
+                this.cdr.detectChanges();
             }
         });
     }
@@ -1166,6 +1184,7 @@ export class Snakey implements AfterViewInit {
             next: (res: any) => {
                 if (res.status === 'success' && res.leaderboard) {
                     this.leaderboard = res.leaderboard;
+                    this.cdr.detectChanges();
                 }
             },
             error: (err) => {
