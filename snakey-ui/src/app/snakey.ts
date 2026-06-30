@@ -48,6 +48,9 @@ export class Snakey implements AfterViewInit {
     // Vibe Code & Tournament state
     moveHistory: any[] = [];
     generatingVibeCode = false;
+    isRecordingVibe = false;
+    previousStrategyCode = '';
+    includePreviousStrategy = false;
     leaderboard: any[] = [];
     leaderboardInterval: any;
     tournamentStrategyName = '';
@@ -377,6 +380,9 @@ export class Snakey implements AfterViewInit {
         if (this.autoPlayTimeout) clearTimeout(this.autoPlayTimeout);
         
         this.moveHistory = [];
+        if (this.isRecordingVibe) {
+            this.pythonStrategyCode = "# Game Recording Started...\n# Vibe Code Generation Mode\n\n";
+        }
         
         if (this.piecesG) this.piecesG.selectAll("*").remove();
         if (this.winHighlightG) this.winHighlightG.selectAll("*").remove();
@@ -828,6 +834,10 @@ export class Snakey implements AfterViewInit {
             is_ai: isAI
         });
         
+        if (this.isRecordingVibe) {
+            this.pythonStrategyCode += `# Turn ${this.totalMoves + 1}: ${this.currentTurn} played at (${x}, ${y})\n`;
+        }
+        
         this.totalMoves++;
         this.renderPieces();
 
@@ -836,6 +846,11 @@ export class Snakey implements AfterViewInit {
             this.gameOver = true;
             this.highlightWin(winPoints);
             this.calculateScore(this.currentTurn);
+            
+            if (this.isRecordingVibe) {
+                this.pythonStrategyCode += `# Game Over! ${this.currentTurn} wins.\n`;
+                this.generateVibeCode();
+            }
             return;
         }
 
@@ -1072,15 +1087,31 @@ export class Snakey implements AfterViewInit {
         }
     }
 
+    startVibeRecording() {
+        this.previousStrategyCode = this.pythonStrategyCode;
+        this.isRecordingVibe = true;
+        this.resetGame();
+    }
+
+    giveUpAndGenerate() {
+        if (!this.isRecordingVibe) return;
+        this.gameOver = true;
+        this.pythonStrategyCode += `# Game Over! Player gave up.\n`;
+        this.generateVibeCode();
+    }
+
     generateVibeCode() {
         if (this.moveHistory.length === 0) {
             alert('No moves to analyze! Play some moves first.');
             return;
         }
         this.generatingVibeCode = true;
+        this.isRecordingVibe = false; // Stop recording once we generate
+        
         this.http.post('/api/generate-vibe-code', {
             targetShape: this.targetShapeName,
-            trajectory: this.moveHistory
+            trajectory: this.moveHistory,
+            previous_strategy: this.includePreviousStrategy ? this.previousStrategyCode : null
         }).subscribe({
             next: (res: any) => {
                 this.generatingVibeCode = false;

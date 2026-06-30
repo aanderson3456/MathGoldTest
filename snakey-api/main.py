@@ -20,6 +20,7 @@ class CodeSubmit(BaseModel):
 class VibeCodeRequest(BaseModel):
     targetShape: str
     trajectory: list
+    previous_strategy: str | None = None
 
 class SubmitStrategyRequest(BaseModel):
     author: str
@@ -121,9 +122,17 @@ async def generate_vibe_code(request: VibeCodeRequest):
     # Mocking Gemma 2B/7B LLM response based on Kaggle class handover
     # In a real implementation, we would pass request.trajectory to the model
     
+    prev_str = ""
+    if request.previous_strategy:
+        # Limit to first 20 lines
+        lines = request.previous_strategy.split('\n')[:20]
+        prev_str = "\n    # Building upon previous strategy snippet:\n"
+        for line in lines:
+            prev_str += f"    # {line}\n"
+    
     mock_generated_code = f"""def get_move(board_state, current_turn):
     # AI-Generated Strategy via Gemma 2B (Mock)
-    # Infers heuristics from your recent trajectory of {len(request.trajectory)} moves!
+    # Infers heuristics from your recent trajectory of {len(request.trajectory)} moves!{prev_str}
     
     import random
     
