@@ -44,6 +44,14 @@ export class Snakey implements AfterViewInit {
     autoPlaying = false;
     autoPlayTimeout: any;
     showApiDocs = false;
+    
+    // Vibe Code & Tournament state
+    moveHistory: any[] = [];
+    generatingVibeCode = false;
+    leaderboard: any[] = [];
+    leaderboardInterval: any;
+    tournamentStrategyName = '';
+    submittingTournament = false;
 
     toggleApiDocs() {
         this.showApiDocs = !this.showApiDocs;
@@ -263,6 +271,8 @@ export class Snakey implements AfterViewInit {
             if (isPlatformBrowser(this.platformId)) {
                 this.initD3();
                 this.init();
+                this.fetchLeaderboard();
+                this.leaderboardInterval = setInterval(() => this.fetchLeaderboard(), 5000);
             }
         } catch (e: any) {
             console.error(e);
@@ -365,6 +375,8 @@ export class Snakey implements AfterViewInit {
         this.firstMoveCenter = false;
         this.autoPlaying = false;
         if (this.autoPlayTimeout) clearTimeout(this.autoPlayTimeout);
+        
+        this.moveHistory = [];
         
         if (this.piecesG) this.piecesG.selectAll("*").remove();
         if (this.winHighlightG) this.winHighlightG.selectAll("*").remove();
@@ -802,8 +814,20 @@ export class Snakey implements AfterViewInit {
             }
         }
 
+        // Capture state before move
+        const stateSnapshot = { ...this.board };
+        
         this.board[key] = this.currentTurn;
         this.lastMove = {x, y, player: this.currentTurn};
+        
+        // Record trajectory
+        this.moveHistory.push({
+            board_state: stateSnapshot,
+            turn: this.currentTurn,
+            move: {x, y},
+            is_ai: isAI
+        });
+        
         this.totalMoves++;
         this.renderPieces();
 
@@ -1046,5 +1070,76 @@ export class Snakey implements AfterViewInit {
                 textarea.selectionStart = textarea.selectionEnd = start + 4;
             });
         }
+    }
+
+    generateVibeCode() {
+        if (this.moveHistory.length === 0) {
+            alert('No moves to analyze! Play some moves first.');
+            return;
+        }
+        this.generatingVibeCode = true;
+        this.http.post('/api/generate-vibe-code', {
+            targetShape: this.targetShapeName,
+            trajectory: this.moveHistory
+        }).subscribe({
+            next: (res: any) => {
+                this.generatingVibeCode = false;
+                if (res.status === 'success' && res.code) {
+                    this.pythonStrategyCode = res.code;
+                } else {
+                    alert('Error generating code: ' + (res.message || 'Unknown error'));
+                }
+            },
+            error: (err) => {
+                this.generatingVibeCode = false;
+                console.error(err);
+                alert('API Error during code generation.');
+            }
+        });
+    }
+
+    submitToTournament() {
+        if (!this.tournamentStrategyName) {
+            alert('Please enter a name for your strategy!');
+            return;
+        }
+        if (!this.pythonStrategyCode || this.pythonStrategyCode.trim() === '') {
+            alert('Strategy code is empty.');
+            return;
+        }
+        this.submittingTournament = true;
+        this.http.post('/api/submit-strategy', {
+            author: this.tournamentStrategyName,
+            code: this.pythonStrategyCode
+        }).subscribe({
+            next: (res: any) => {
+                this.submittingTournament = false;
+                if (res.status === 'success') {
+                    alert('Strategy submitted to the Tournament successfully!');
+                    this.tournamentStrategyName = '';
+                    this.fetchLeaderboard();
+                } else {
+                    alert('Error submitting strategy: ' + (res.message || 'Unknown error'));
+                }
+            },
+            error: (err) => {
+                this.submittingTournament = false;
+                console.error(err);
+                alert('API Error submitting strategy.');
+            }
+        });
+    }
+
+    fetchLeaderboard() {
+        this.http.get('/api/leaderboard').subscribe({
+            next: (res: any) => {
+                if (res.status === 'success' && res.leaderboard) {
+                    this.leaderboard = res.leaderboard;
+                }
+            },
+            error: (err) => {
+                console.error('Leaderboard fetch error:', err);
+            }
+        });
     }
 }

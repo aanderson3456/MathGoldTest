@@ -92,6 +92,16 @@
                 </div>
             </div>
 
+            <!-- Hall of Fame Leaderboard -->
+            <div class="status-card" style="border: 2px solid #9333ea; background: #faf5ff;">
+                <div class="status-label" style="color: #7e22ce; font-weight: bold; margin-bottom: 0.5rem;">HALL OF FAME LEADERBOARD</div>
+                <div *ngIf="leaderboard.length === 0" style="color: #6b7280; font-size: 0.85rem; text-align: center;">No strategies yet</div>
+                <div *ngFor="let entry of leaderboard; let i = index" style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #e5e7eb; font-size: 0.9rem;">
+                    <span style="font-weight: bold; color: #4b5563;">{{i + 1}}. {{entry.author}}</span>
+                    <span style="color: #9333ea; font-weight: bold;">{{entry.elo}} ELO</span>
+                </div>
+            </div>
+
             <div class="status-card">
                 <div class="status-label">Current Turn</div>
                 <div id="turn-display" class="status-value" [class]="'turn-' + currentTurn.toLowerCase()">
@@ -129,15 +139,29 @@
                 <div *ngIf="showApiDocs" style="background: rgba(139, 92, 246, 0.1); border-left: 3px solid var(--accent-color); padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.85rem; border-radius: 0 4px 4px 0;">
                     <strong style="display: block; margin-bottom: 0.25rem;">API Parameters:</strong>
                     <ul style="margin: 0 0 0 1rem; padding: 0; color: var(--text-secondary); line-height: 1.4;">
-                        <li><code>board_state</code>: List of dicts, e.g.,<br><code style="font-size: 0.75rem;">[{"x": 0, "y": 0, "owner": "maker"}]</code></li>
+                        <li><code>board_state</code>: List of dicts, e.g.,<br><code style="font-size: 0.75rem;">[&#123;"x": 0, "y": 0, "owner": "maker"&#125;]</code></li>
                         <li><code>current_turn</code>: String (<code>'maker'</code> or <code>'breaker'</code>)</li>
                     </ul>
                 </div>
 
                 <textarea [(ngModel)]="pythonStrategyCode" (keydown)="handleTab($event)" style="white-space: pre; overflow-wrap: normal; overflow-x: auto; width: 100%; height: 400px; font-size: 0.8rem; background: #1e1e1e; color: #d4d4d4; padding: 0.5rem; border-radius: 4px; font-family: monospace; border: none; resize: vertical;"></textarea>
-                <button class="primary" style="margin-top: 0.5rem; width: 100%;" (click)="evaluatePythonStrategy()" [disabled]="evaluatingPython">
-                    {{ evaluatingPython ? 'Evaluating...' : 'Test Strategy vs AI' }}
-                </button>
+                
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button class="primary" style="flex: 1;" (click)="evaluatePythonStrategy()" [disabled]="evaluatingPython">
+                        {{ evaluatingPython ? 'Evaluating...' : 'Test Strategy' }}
+                    </button>
+                    <button class="primary" style="flex: 1; background-color: #8b5cf6;" (click)="generateVibeCode()" [disabled]="generatingVibeCode || moveHistory.length === 0">
+                        {{ generatingVibeCode ? 'Analyzing Vibes...' : '✨ Generate Vibe Code' }}
+                    </button>
+                </div>
+
+                <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(218, 165, 32, 0.1); border: 1px solid #DAA520; border-radius: 4px;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: #DAA520;">Tournament Submission</h4>
+                    <input type="text" [(ngModel)]="tournamentStrategyName" placeholder="Strategy Author/Name" style="width: 100%; margin-bottom: 0.5rem;">
+                    <button class="primary" style="width: 100%; background: #DAA520; color: #000;" (click)="submitToTournament()" [disabled]="submittingTournament">
+                        {{ submittingTournament ? 'Submitting...' : '🏆 Submit to Tournament' }}
+                    </button>
+                </div>
                 <div *ngIf="isAiVsAiMode()" style="margin-top: 0.5rem;">
                     <button class="primary" style="width: 100%; background: #DAA520; color: #000;" (click)="toggleAutoPlay()" [disabled]="gameOver">
                         {{ autoPlaying ? 'Stop Auto-Play' : '▶ Start Auto-Play Match' }}

@@ -74,7 +74,7 @@ main {
 }
 
 .sidebar {
-    flex: 0 0 320px;
+    flex: 1;
     background-color: var(--card-bg);
     padding: 1rem;
     border-radius: 1rem;
@@ -83,7 +83,7 @@ main {
 }
 
 .editor-sidebar {
-    flex: 0 0 400px;
+    flex: 1;
     background-color: var(--card-bg);
     padding: 1rem;
     border-radius: 1rem;
@@ -92,7 +92,7 @@ main {
 }
 
 .game-container {
-    flex: 1;
+    flex: 2;
     min-width: 0;
     position: relative;
     background-color: var(--card-bg);
