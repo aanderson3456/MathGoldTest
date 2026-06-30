@@ -61,7 +61,7 @@ async def get_move_api(request: GetMoveRequest):
         }
 
 @app.post("/api/evaluate")
-async def evaluate_strategy(submission: CodeSubmit):
+async def evaluate_strategy(submission: CodeSubmit, db: Session = Depends(get_db)):
     # This is a highly simplified and insecure prototype for evaluating user code.
     # In a production environment, this would run in an isolated sandbox (e.g. Docker).
     # The user's code should define a function `get_move(board, current_turn)`
@@ -83,10 +83,30 @@ async def evaluate_strategy(submission: CodeSubmit):
         test_board = {}
         test_move = exec_env["get_move"](test_board, "Breaker")
         
+        # Simulate matches
+        vibe_player = db.query(Strategy).filter(Strategy.author == 'VibePlayer').first()
+        challenger = db.query(Strategy).filter(Strategy.author == 'Challenger').first()
+        
+        vs_vibe = "Error"
+        vs_challenger = "Error"
+        
+        # Use targetShape from submission if it exists, otherwise default
+        target_shape = getattr(submission, 'targetShape', 'Pentomino_F')
+        
+        if vibe_player:
+            winner = await asyncio.to_thread(sandbox.run_match_in_sandbox, user_code, vibe_player.code, target_shape)
+            vs_vibe = "Win" if winner == "Maker" else ("Loss" if winner == "Breaker" else "Draw")
+            
+        if challenger:
+            winner = await asyncio.to_thread(sandbox.run_match_in_sandbox, user_code, challenger.code, target_shape)
+            vs_challenger = "Win" if winner == "Maker" else ("Loss" if winner == "Breaker" else "Draw")
+
         return {
             "status": "success", 
             "message": "Strategy evaluated successfully. It returned a valid move format.",
             "test_move": test_move,
+            "vs_vibe": vs_vibe,
+            "vs_challenger": vs_challenger,
             "logs": stdout.getvalue()
         }
     except Exception as e:
@@ -171,7 +191,43 @@ async def get_leaderboard(db: Session = Depends(get_db)):
     strategies = db.query(Strategy).order_by(Strategy.elo.desc()).limit(10).all()
     return {
         "status": "success",
-        "leaderboard": [{"author": s.author, "elo": round(s.elo, 1), "wins": s.wins, "losses": s.losses} for s in strategies]
+        "leaderboard": [{"id": s.id, "author": s.author, "elo": round(s.elo, 1), "wins": s.wins, "losses": s.losses} for s in strategies]
+    }
+
+@app.get("/api/recent-matches")
+async def get_recent_matches(db: Session = Depends(get_db)):
+    results = db.query(MatchResult).order_by(MatchResult.id.desc()).limit(5).all()
+    matches = []
+    for r in results:
+        s1 = db.query(Strategy).filter(Strategy.id == r.strategy1_id).first()
+        s2 = db.query(Strategy).filter(Strategy.id == r.strategy2_id).first()
+        winner = db.query(Strategy).filter(Strategy.id == r.winner_id).first() if r.winner_id else None
+        
+        s1_name = s1.author if s1 else "Unknown"
+        s2_name = s2.author if s2 else "Unknown"
+        winner_name = winner.author if winner else "Draw"
+        
+        matches.append({
+            "id": r.id,
+            "maker": s1_name,
+            "breaker": s2_name,
+            "winner": winner_name
+        })
+    return {"status": "success", "matches": matches}
+
+@app.get("/api/strategy/{strategy_id}")
+async def get_strategy(strategy_id: int, db: Session = Depends(get_db)):
+    strategy = db.query(Strategy).filter(Strategy.id == strategy_id).first()
+    if not strategy:
+        raise HTTPException(status_code=404, detail="Strategy not found")
+    return {
+        "status": "success",
+        "strategy": {
+            "id": strategy.id,
+            "author": strategy.author,
+            "code": strategy.code,
+            "elo": round(strategy.elo, 1)
+        }
     }
 
 # --- Tournament Background Worker ---
@@ -234,6 +290,162 @@ async def tournament_worker():
 
 @app.on_event("startup")
 async def startup_event():
+    db = SessionLocal()
+    try:
+        count = db.query(Strategy).count()
+        if count < 5:
+            existing = {s.author for s in db.query(Strategy).all()}
+            personalities = [
+                {
+                    "author": "VibePlayer",
+                    "code": """def get_move(board_state, current_turn):
+    import random
+    valid_cells = []
+    for x in range(20):
+        for y in range(20):
+            if f"{x},{y}" not in board_state:
+                valid_cells.append({"x": x, "y": y})
+    if valid_cells:
+        adjacent = []
+        for cell in valid_cells:
+            for dx, dy in [(0,1), (0,-1), (1,0), (-1,0)]:
+                if f"{cell['x']+dx},{cell['y']+dy}" in board_state:
+                    adjacent.append(cell)
+                    break
+        if adjacent:
+            return random.choice(adjacent)
+        return random.choice(valid_cells)
+    return None
+"""
+                },
+                {
+                    "author": "Challenger",
+                    "code": """def get_move(board_state, current_turn):
+    import random
+    grid_size = 20
+    valid_cells = []
+    for x in range(grid_size):
+        for y in range(grid_size):
+            if f"{x},{y}" not in board_state:
+                valid_cells.append({"x": x, "y": y})
+    if not valid_cells:
+        return None
+    maker_adjacent = []
+    for cell in valid_cells:
+        is_adj = False
+        for dx, dy in [(0,1), (0,-1), (1,0), (-1,0), (1,1), (-1,-1), (1,-1), (-1,1)]:
+            tx, ty = cell['x'] + dx, cell['y'] + dy
+            if board_state.get(f"{tx},{ty}") == 'Maker':
+                is_adj = True
+                break
+        if is_adj:
+            maker_adjacent.append(cell)
+    if maker_adjacent:
+        return random.choice(maker_adjacent)
+    center = grid_size // 2
+    valid_cells.sort(key=lambda c: (c["x"]-center)**2 + (c["y"]-center)**2)
+    return valid_cells[0]
+"""
+                },
+                {
+                    "author": "Elder",
+                    "code": """def get_move(board_state, current_turn):
+    import random
+    grid_size = 20
+    opponent = "Maker" if current_turn.lower() == "breaker" else "Breaker"
+    opp_cells = []
+    valid_cells = []
+    for x in range(grid_size):
+        for y in range(grid_size):
+            owner = board_state.get(f"{x},{y}")
+            if not owner:
+                valid_cells.append({"x": x, "y": y})
+            elif owner.lower() == opponent.lower():
+                opp_cells.append((x, y))
+    if not valid_cells:
+        return None
+    if opp_cells:
+        block_candidates = []
+        for (ox, oy) in opp_cells:
+            for dx, dy in [(0,1), (0,-1), (1,0), (-1,0), (1,1), (1,-1), (-1,1), (-1,-1)]:
+                bx, by = ox + dx, oy + dy
+                if 0 <= bx < grid_size and 0 <= by < grid_size:
+                    if f"{bx},{by}" not in board_state:
+                        block_candidates.append({"x": bx, "y": by})
+        if block_candidates:
+            return random.choice(block_candidates)
+    center = grid_size // 2
+    valid_cells.sort(key=lambda c: (c["x"]-center)**2 + (c["y"]-center)**2)
+    return valid_cells[0]
+"""
+                },
+                {
+                    "author": "Goldfish",
+                    "code": """def get_move(board_state, current_turn):
+    import random
+    grid_size = 20
+    valid_cells = []
+    for x in range(grid_size):
+        for y in range(grid_size):
+            if f"{x},{y}" not in board_state:
+                valid_cells.append({"x": x, "y": y})
+    if not valid_cells:
+        return None
+    
+    last_move_key = list(board_state.keys())[-1] if board_state else None
+    if last_move_key:
+        lx, ly = map(int, last_move_key.split(','))
+        adj_to_last = []
+        for dx, dy in [(0,1), (0,-1), (1,0), (-1,0), (1,1), (-1,-1), (1,-1), (-1,1)]:
+            ax, ay = lx + dx, ly + dy
+            if 0 <= ax < grid_size and 0 <= ay < grid_size and f"{ax},{ay}" not in board_state:
+                adj_to_last.append({"x": ax, "y": ay})
+        if adj_to_last:
+            return random.choice(adj_to_last)
+            
+    return random.choice(valid_cells)
+"""
+                },
+                {
+                    "author": "RandomJitter",
+                    "code": """def get_move(board_state, current_turn):
+    import random
+    grid_size = 20
+    has_pieces = False
+    min_x, max_x, min_y, max_y = grid_size, 0, grid_size, 0
+    for k in board_state:
+        x, y = map(int, k.split(','))
+        has_pieces = True
+        min_x, max_x = min(min_x, x), max(max_x, x)
+        min_y, max_y = min(min_y, y), max(max_y, y)
+    valid_cells = []
+    if has_pieces:
+        for x in range(max(0, min_x - 2), min(grid_size, max_x + 3)):
+            for y in range(max(0, min_y - 2), min(grid_size, max_y + 3)):
+                if f"{x},{y}" not in board_state:
+                    valid_cells.append({"x": x, "y": y})
+    if not valid_cells:
+        for x in range(grid_size):
+            for y in range(grid_size):
+                if f"{x},{y}" not in board_state:
+                    valid_cells.append({"x": x, "y": y})
+    if valid_cells:
+        return random.choice(valid_cells)
+    return None
+"""
+                }
+            ]
+            for p in personalities:
+                if p["author"] not in existing:
+                    new_s = Strategy(author=p["author"], code=p["code"], elo=1200.0)
+                    db.add(new_s)
+            db.commit()
+            print("Successfully seeded default personalities.")
+    except Exception as e:
+        print(f"Error seeding database: {e}")
+        db.rollback()
+    finally:
+        db.close()
     asyncio.create_task(tournament_worker())
 
 if __name__ == "__main__":

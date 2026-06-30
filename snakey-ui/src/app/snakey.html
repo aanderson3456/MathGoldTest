@@ -11,6 +11,8 @@
 <main>
     <div class="sidebar">
         <div class="controls">
+            <!-- Moved leaderboard and ticker to editor-sidebar -->
+
             <div class="control-group">
                 <h3>Target Polyomino</h3>
                 <select id="shape-selector" (change)="onShapeChange($event)">
@@ -71,8 +73,8 @@
                     style="background: linear-gradient(to right, #FFD700, #FFA500); color: #5a3e00; font-weight: 800; border: 2px solid #DAA520;">
                     {{ competeMode ? '🏆 COMPETE MODE: ON' : '🏆 START COMPETE MODE' }}
                 </button>
-                <button id="reset-btn" class="primary" style="margin-top: 0.5rem;" (click)="resetGame()">Reset
-                    Game</button>
+                <button id="reset-btn" class="primary" style="margin-top: 0.5rem;" (click)="resetGame()">Reset Game</button>
+                <button id="surrender-btn" class="primary" style="margin-top: 0.5rem; background-color: #ef4444;" (click)="surrender()" [disabled]="gameOver">🏳️ Surrender</button>
                 <button id="toggle-paving" style="margin-top: 0.5rem;" (click)="togglePaving()">{{showPaving ? 'Hide
                     Paving Strategy' : 'Show Paving Strategy'}}</button>
             </div>
@@ -92,15 +94,7 @@
                 </div>
             </div>
 
-            <!-- Hall of Fame Leaderboard -->
-            <div class="status-card" style="border: 2px solid #9333ea; background: #faf5ff;">
-                <div class="status-label" style="color: #7e22ce; font-weight: bold; margin-bottom: 0.5rem;">HALL OF FAME LEADERBOARD</div>
-                <div *ngIf="leaderboard.length === 0" style="color: #6b7280; font-size: 0.85rem; text-align: center;">No strategies yet</div>
-                <div *ngFor="let entry of leaderboard; let i = index" style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #e5e7eb; font-size: 0.9rem;">
-                    <span style="font-weight: bold; color: #4b5563;">{{i + 1}}. {{entry.author}}</span>
-                    <span style="color: #9333ea; font-weight: bold;">{{entry.elo}} ELO</span>
-                </div>
-            </div>
+
 
             <div class="status-card">
                 <div class="status-label">Current Turn</div>
@@ -112,21 +106,104 @@
                 style="border: 2px solid var(--accent-color);">
                 <div class="status-label">Result</div>
                 <div id="winner-name" class="status-value" style="color: var(--accent-color);">
-                    {{currentTurn.toUpperCase()}} WINS!</div>
+                    {{gameWinner ? gameWinner.toUpperCase() + ' WINS!' : currentTurn.toUpperCase() + ' WINS!'}}</div>
             </div>
 
         </div>
     </div>
 
-    <div class="game-container">
+    <div class="game-container" style="position: relative;">
         <div class="goal-banner">
             <span class="goal-text">TARGET: {{targetShapeName.replace('_', ' ')}}</span>
             <div id="shape-preview-main" class="shape-preview mini"></div>
         </div>
         <svg id="grid-svg"></svg>
+
+        <!-- Fullscreen Victory / Defeat Overlay -->
+        <div *ngIf="gameOver" class="game-overlay">
+            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);">
+                {{ gameWinner === 'Maker' ? '🏆 MAKER WINS!' : '💀 BREAKER WINS!' }}
+            </div>
+            
+            <p style="font-size: 1.1rem; color: #cbd5e1; max-width: 400px; margin: 0 auto 1.5rem auto;">
+                Target shape completed in <strong>{{totalMoves}} moves</strong>.
+            </p>
+
+            <div *ngIf="generatingVibeCode" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                <div class="spinner"></div>
+                <div style="color: #a78bfa; font-weight: 600; font-size: 1rem; animation: pulseText 1.5s infinite;">🤖 Gemma is compiling your gameplay vibes...</div>
+            </div>
+
+            <!-- Shown BEFORE compiling -->
+            <div *ngIf="!generatingVibeCode && !pythonStrategyCode.includes('def get_move')" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto;">
+                <span style="display: block; font-weight: bold; color: #cbd5e1; margin-bottom: 0.25rem;">⚡ Ready to compile?</span>
+                <span style="font-size: 0.85rem; color: #94a3b8;">You played {{totalMoves}} moves. Click "Compile Vibes to Code" below to generate a Python AI strategy using Gemma.</span>
+            </div>
+
+            <!-- Shown AFTER compiling -->
+            <div *ngIf="!generatingVibeCode && pythonStrategyCode.includes('def get_move')" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto;">
+                <span style="display: block; font-weight: bold; color: #10b981; margin-bottom: 0.25rem;">✨ Vibe Code Inferred!</span>
+                <span style="font-size: 0.85rem; color: #a7f3d0;">Your manual gameplay moves have been translated into Python code in the Strategy Editor. Try submitting it to the Tournament!</span>
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button class="primary" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; padding: 0.75rem 1.5rem; font-weight: bold; border-radius: 0.5rem; color: white;" (click)="resetGame()">
+                    🔄 Reset & Play Again
+                </button>
+                <!-- Only visible if not compiled yet -->
+                <button *ngIf="!generatingVibeCode && moveHistory.length > 0 && !pythonStrategyCode.includes('def get_move')" class="primary" style="background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 0.75rem 1.5rem; font-weight: bold; border-radius: 0.5rem; color: white;" (click)="generateVibeCode()">
+                    ⚡ Compile Vibes to Code
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="editor-sidebar">
+        <!-- Hall of Fame Leaderboard -->
+        <div class="status-card" style="border: 2px solid #9333ea; background: #faf5ff; margin-bottom: 1rem; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.1);">
+            <div class="status-label" style="color: #7e22ce; font-weight: bold; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>🏆 HALL OF FAME LEADERBOARD</span>
+                <span style="font-size: 0.7rem; color: #a855f7; font-weight: normal; cursor: pointer; text-decoration: underline;" (click)="fetchLeaderboard()">Refresh</span>
+            </div>
+            <div *ngIf="leaderboard.length === 0" style="color: #6b7280; font-size: 0.85rem; text-align: center; padding: 10px 0;">No strategies yet</div>
+            <div *ngFor="let entry of leaderboard; let i = index" 
+                 (click)="loadStrategy(entry.id)"
+                 class="leaderboard-row"
+                 style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid #e9d5ff; font-size: 0.9rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; margin-bottom: 2px;">
+                <span style="font-weight: bold; color: #4b5563; display: flex; align-items: center; gap: 4px;">
+                    <span *ngIf="i === 0">👑</span>
+                    <span *ngIf="i === 1">🥈</span>
+                    <span *ngIf="i === 2">🥉</span>
+                    <span *ngIf="i > 2" style="color: #9ca3af; width: 16px; display: inline-block; text-align: center;">{{i + 1}}</span>
+                    {{entry.author}}
+                </span>
+                <span style="color: #9333ea; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                    {{entry.elo}} ELO
+                    <span style="font-size: 0.7rem; color: #6b7280; font-weight: normal;">({{entry.wins}}W-{{entry.losses}}L)</span>
+                </span>
+            </div>
+            <div style="font-size: 0.7rem; text-align: center; color: #a855f7; margin-top: 4px; font-style: italic;">💡 Click a row to load its code into the editor!</div>
+        </div>
+
+        <!-- Tournament Match Ticker -->
+        <div class="status-card" style="border: 2px solid #10b981; background: #ecfdf5; margin-bottom: 1rem; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);">
+            <div class="status-label" style="color: #047857; font-weight: bold; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>⚡ LIVE MATCH FEED</span>
+                <span class="pulse-dot"></span>
+            </div>
+            <div *ngIf="recentMatches.length === 0" style="color: #6b7280; font-size: 0.85rem; text-align: center; padding: 10px 0;">Waiting for matches...</div>
+            <div *ngFor="let match of recentMatches" style="padding: 4px 6px; border-bottom: 1px dashed #a7f3d0; font-size: 0.8rem; line-height: 1.3;">
+                <div style="display: flex; justify-content: space-between; color: #374151;">
+                    <span><strong>{{match.maker}}</strong> (Maker)</span>
+                    <span style="color: #6b7280;">vs</span>
+                    <span><strong>{{match.breaker}}</strong> (Breaker)</span>
+                </div>
+                <div style="text-align: right; color: #059669; font-weight: bold; font-size: 0.75rem;">
+                    👉 Winner: <span [style.color]="match.winner === 'Draw' ? '#6b7280' : '#10b981'">{{match.winner}}</span>
+                </div>
+            </div>
+        </div>
+
         <div class="controls">
             <div class="control-group">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
@@ -184,6 +261,20 @@
                 <div style="margin-top: 0.5rem; font-size: 0.75rem; background: #0a0a0a; color: #0f0; padding: 0.5rem; border-radius: 4px; height: 150px; overflow-y: auto; font-family: monospace;">
                     <div style="color: #666; margin-bottom: 4px;">--- Live Execution Logs ---</div>
                     <div *ngFor="let log of executionLogs" style="white-space: pre-wrap; margin-bottom: 2px;">{{ log }}</div>
+                </div>
+
+                <div *ngIf="evalResult" style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 4px;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: #10b981;">Evaluation Report</h4>
+                    <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">
+                        <strong>Code Health:</strong> {{ evalResult.status === 'success' ? '✅ Valid' : '❌ Error' }}
+                    </div>
+                    <div style="font-size: 0.8rem; color: #a7f3d0;" *ngIf="evalResult.message">{{ evalResult.message }}</div>
+                    
+                    <div *ngIf="evalResult.status === 'success'" style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed rgba(16, 185, 129, 0.3);">
+                        <strong>Simulated Matchups (Local Draft)</strong><br>
+                        <span style="color: #6ee7b7; font-size: 0.8rem;">vs VibePlayer: <em [style.color]="evalResult.vs_vibe === 'Win' ? '#10b981' : (evalResult.vs_vibe === 'Loss' ? '#ef4444' : '#fbbf24')">{{ evalResult.vs_vibe || 'Calculating...' }}</em></span><br>
+                        <span style="color: #6ee7b7; font-size: 0.8rem;">vs Challenger: <em [style.color]="evalResult.vs_challenger === 'Win' ? '#10b981' : (evalResult.vs_challenger === 'Loss' ? '#ef4444' : '#fbbf24')">{{ evalResult.vs_challenger || 'Calculating...' }}</em></span>
+                    </div>
                 </div>
             </div>
         </div>

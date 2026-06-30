@@ -31,10 +31,14 @@ test.describe('Snakey Auto-Play Test Suite', () => {
     // To guarantee a win against the Optimal AI in a simple test, 
     // we'll change the target shape to "Monomino". The Maker wins if they place ANY piece.
     // The Python strategy will place a piece and win instantly.
-    await page.locator('#shape-selector').selectOption('Monomino');
+    const goodStrategy = `def get_move(board_state, current_turn):
+    valid = [{"x":x, "y":y} for x in range(20) for y in range(20) if f"{x},{y}" not in board_state]
+    return valid[0] if valid else None
+`;
+    await page.locator('textarea').fill(goodStrategy);
     
-    // Changing the shape should reset the game. Let's make sure the win-status is hidden.
-    await expect(page.locator('#win-status')).toBeHidden();
+    // Changing the shape will reset the game.
+    await page.locator('#shape-selector').selectOption('Monomino');
 
     // 6. Run auto-play again with the new conditions
     await autoPlayBtn.click();

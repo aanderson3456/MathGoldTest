@@ -33,6 +33,7 @@ export class Snakey implements AfterViewInit {
     gameMode = 'p_vs_ai_optimal';
     showPaving = false;
     gameOver = false;
+    gameWinner: string | null = null;
     lastMove: {x: number, y: number, player: string} | null = null;
     aiThinking = false;
     customMakerColor = this.getDefaultColor(0);
@@ -48,10 +49,11 @@ export class Snakey implements AfterViewInit {
     // Vibe Code & Tournament state
     moveHistory: any[] = [];
     generatingVibeCode = false;
-    isRecordingVibe = false;
+    isRecordingVibe = true;
     previousStrategyCode = '';
     includePreviousStrategy = false;
     leaderboard: any[] = [];
+    recentMatches: any[] = [];
     leaderboardInterval: any;
     tournamentStrategyName = '';
     submittingTournament = false;
@@ -275,7 +277,11 @@ export class Snakey implements AfterViewInit {
                 this.initD3();
                 this.init();
                 this.fetchLeaderboard();
-                this.leaderboardInterval = setInterval(() => this.fetchLeaderboard(), 5000);
+                this.fetchRecentMatches();
+                this.leaderboardInterval = setInterval(() => {
+                    this.fetchLeaderboard();
+                    this.fetchRecentMatches();
+                }, 5000);
             }
         } catch (e: any) {
             console.error(e);
@@ -371,6 +377,7 @@ export class Snakey implements AfterViewInit {
         this.board = {};
         this.currentTurn = 'Maker';
         this.gameOver = false;
+        this.gameWinner = null;
         this.lastMove = null;
         this.aiThinking = false;
         this.totalMoves = 0;
@@ -380,9 +387,15 @@ export class Snakey implements AfterViewInit {
         if (this.autoPlayTimeout) clearTimeout(this.autoPlayTimeout);
         
         this.moveHistory = [];
-        if (this.isRecordingVibe) {
-            this.pythonStrategyCode = "# Game Recording Started...\n# Vibe Code Generation Mode\n\n";
-        }
+        setTimeout(() => {
+            if (this.gameMode.includes('custom')) {
+                this.isRecordingVibe = false;
+            }
+            
+            if (this.isRecordingVibe) {
+                this.pythonStrategyCode = "# Game Recording Started...\n# Vibe Code Generation Mode\n\n";
+            }
+        });
         
         if (this.piecesG) this.piecesG.selectAll("*").remove();
         if (this.winHighlightG) this.winHighlightG.selectAll("*").remove();
@@ -399,11 +412,16 @@ export class Snakey implements AfterViewInit {
     }
 
     init() {
-        this.updatePythonStrategyCode();
-        this.drawGrid();
-        this.updatePreview();
-        this.drawPaving();
-        this.checkAITurn();
+        setTimeout(() => {
+            this.updatePythonStrategyCode();
+            if (this.isRecordingVibe) {
+                this.pythonStrategyCode = "# Game Recording Started...\n# Vibe Code Generation Mode\n\n";
+            }
+            this.drawGrid();
+            this.updatePreview();
+            this.drawPaving();
+            this.checkAITurn();
+        });
     }
 
     seededRandom() {
@@ -500,8 +518,16 @@ export class Snakey implements AfterViewInit {
 
         let aiPlayer = this.currentTurn;
         let mode = 'random';
-        if (this.gameMode.includes('optimal')) mode = 'optimal';
-        if (this.gameMode.includes('custom')) mode = 'custom';
+        
+        if (this.currentTurn === 'Maker') {
+            mode = this.gameMode.split('_vs_')[0].replace('ai_', '');
+        } else {
+            mode = this.gameMode.split('_vs_')[1].replace('ai_', '');
+        }
+        
+        if (!['random', 'optimal', 'custom'].includes(mode)) {
+             mode = 'random'; // fallback if player mode
+        }
         
         let validCells = [];
         for (let x = 0; x < this.gridSize; x++) {
@@ -551,19 +577,22 @@ export class Snakey implements AfterViewInit {
                     } else {
                         console.error('Custom AI returned invalid move:', res);
                         if (res.logs) this.executionLogs.push(res.logs);
-                        // Fallback to random if custom fails
-                        let fallback = validCells[Math.floor(this.seededRandom() * validCells.length)];
                         this.aiThinking = false;
-                        this.handleCellClick(fallback.x, fallback.y, true);
+                        this.gameOver = true;
+                        this.gameWinner = this.currentTurn === 'Maker' ? 'Breaker' : 'Maker';
+                        this.pythonStrategyCode += `# Game Over! ${this.currentTurn} strategy threw an error or returned invalid move. Forfeited.\n`;
+                        if (this.isRecordingVibe) this.generateVibeCode();
+                        this.cdr.detectChanges();
                     }
-                    this.cdr.detectChanges();
                 },
                 error: (err) => {
                     console.error('Custom AI error:', err);
-                    // Fallback to random
-                    let fallback = validCells[Math.floor(this.seededRandom() * validCells.length)];
                     this.aiThinking = false;
-                    this.handleCellClick(fallback.x, fallback.y, true);
+                    this.gameOver = true;
+                    this.gameWinner = this.currentTurn === 'Maker' ? 'Breaker' : 'Maker';
+                    this.pythonStrategyCode += `# Game Over! ${this.currentTurn} strategy threw an error. Forfeited.\n`;
+                    if (this.isRecordingVibe) this.generateVibeCode();
+                    this.cdr.detectChanges();
                 }
             });
             return; // We return here because handleCellClick is called asynchronously
@@ -788,6 +817,11 @@ export class Snakey implements AfterViewInit {
     checkAITurn() {
         if (this.gameOver) return;
         
+        // If it's an AI vs AI match, don't move unless autoPlaying is true!
+        if (this.isAiVsAiMode() && !this.autoPlaying) {
+            return;
+        }
+        
         const isMakerAITurn = (this.gameMode === 'ai_random_vs_p' || this.gameMode === 'ai_optimal_vs_p' || this.gameMode === 'ai_custom_vs_p' || this.gameMode === 'ai_custom_vs_ai_optimal' || this.gameMode === 'ai_optimal_vs_ai_custom' || this.gameMode === 'ai_optimal_vs_ai_optimal') && this.currentTurn === 'Maker';
         const isBreakerAITurn = (this.gameMode === 'p_vs_ai_random' || this.gameMode === 'p_vs_ai_optimal' || this.gameMode === 'p_vs_ai_custom' || this.gameMode === 'ai_custom_vs_ai_optimal' || this.gameMode === 'ai_optimal_vs_ai_custom' || this.gameMode === 'ai_optimal_vs_ai_optimal') && this.currentTurn === 'Breaker';
                          
@@ -795,7 +829,7 @@ export class Snakey implements AfterViewInit {
             if (this.autoPlaying) {
                 this.autoPlayTimeout = setTimeout(() => {
                     this.aiMove();
-                }, 500); // 500ms delay for visual effect
+                }, 50); // 50ms delay for visual effect (reduced for testing)
             } else {
                 this.aiMove();
             }
@@ -856,11 +890,23 @@ export class Snakey implements AfterViewInit {
         const winPoints = this.checkWin(this.currentTurn);
         if (winPoints) {
             this.gameOver = true;
+            this.gameWinner = this.currentTurn;
             this.highlightWin(winPoints);
             this.calculateScore(this.currentTurn);
             
             if (this.isRecordingVibe) {
                 this.pythonStrategyCode += `# Game Over! ${this.currentTurn} wins.\n`;
+                this.generateVibeCode();
+            }
+            this.cdr.detectChanges();
+            return;
+        }
+        
+        if (Object.keys(this.board).length === this.gridSize * this.gridSize) {
+            this.gameOver = true;
+            this.gameWinner = 'Breaker';
+            if (this.isRecordingVibe) {
+                this.pythonStrategyCode += `# Game Over! Board full. Breaker wins.\n`;
                 this.generateVibeCode();
             }
             this.cdr.detectChanges();
@@ -1066,19 +1112,33 @@ export class Snakey implements AfterViewInit {
     evaluatePythonStrategy() {
         this.evaluatingPython = true;
         this.evalResult = null;
+        this.executionLogs = []; // Clear previous logs
+        this.executionLogs.push(`Starting evaluation for target: ${this.targetShapeName}...`);
         
         this.http.post('/api/evaluate', {
             code: this.pythonStrategyCode,
             targetShape: this.targetShapeName
         }).subscribe({
-            next: (res) => {
+            next: (res: any) => {
                 this.evaluatingPython = false;
                 this.evalResult = res;
+                if (res.status === 'success') {
+                    this.executionLogs.push(`Evaluation successful!`);
+                    if (res.logs && res.logs.trim() !== '') {
+                        this.executionLogs.push(`\nStandard Output:\n${res.logs}`);
+                    }
+                } else if (res.status === 'error') {
+                    this.executionLogs.push(`Execution Error: ${res.message}`);
+                    if (res.logs && res.logs.trim() !== '') {
+                        this.executionLogs.push(`\nStack Trace:\n${res.logs}`);
+                    }
+                }
                 this.cdr.detectChanges();
             },
             error: (err) => {
                 this.evaluatingPython = false;
                 this.evalResult = { status: 'error', message: 'API Error', logs: err.message };
+                this.executionLogs.push(`API Error: ${err.message}`);
                 this.cdr.detectChanges();
             }
         });
@@ -1104,6 +1164,7 @@ export class Snakey implements AfterViewInit {
     startVibeRecording() {
         this.previousStrategyCode = this.pythonStrategyCode;
         this.isRecordingVibe = true;
+        this.pythonStrategyCode = "# Game Recording Started...\n# Vibe Code Generation Mode\n\n";
         this.resetGame();
     }
 
@@ -1112,6 +1173,13 @@ export class Snakey implements AfterViewInit {
         this.gameOver = true;
         this.pythonStrategyCode += `# Game Over! Player gave up.\n`;
         this.generateVibeCode();
+    }
+
+    surrender() {
+        this.gameOver = true;
+        this.gameWinner = 'Breaker';
+        this.pythonStrategyCode += `# Game Over! Player surrendered.\n`;
+        this.cdr.detectChanges();
     }
 
     generateVibeCode() {
@@ -1189,6 +1257,38 @@ export class Snakey implements AfterViewInit {
             },
             error: (err) => {
                 console.error('Leaderboard fetch error:', err);
+            }
+        });
+    }
+
+    fetchRecentMatches() {
+        this.http.get('/api/recent-matches').subscribe({
+            next: (res: any) => {
+                if (res.status === 'success' && res.matches) {
+                    this.recentMatches = res.matches;
+                    this.cdr.detectChanges();
+                }
+            },
+            error: (err) => {
+                console.error('Recent matches fetch error:', err);
+            }
+        });
+    }
+
+    loadStrategy(strategyId: number) {
+        this.http.get(`/api/strategy/${strategyId}`).subscribe({
+            next: (res: any) => {
+                if (res.status === 'success' && res.strategy) {
+                    this.pythonStrategyCode = res.strategy.code;
+                    this.tournamentStrategyName = res.strategy.author + '_v2';
+                    this.isRecordingVibe = false; // Disable recording since we loaded custom code
+                    this.executionLogs.push(`Loaded strategy "${res.strategy.author}" into editor.`);
+                    this.cdr.detectChanges();
+                }
+            },
+            error: (err) => {
+                console.error('Strategy fetch error:', err);
+                alert('API Error fetching strategy details.');
             }
         });
     }

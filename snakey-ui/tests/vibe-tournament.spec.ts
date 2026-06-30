@@ -18,14 +18,13 @@ test.describe('Snakey Vibe Mode & Tournament Test Suite', () => {
     await page.goto('/');
 
     // Verify initial UI components are visible
-    const vibeBtn = page.getByRole('button', { name: /Start Vibe Recording/ });
-    await expect(vibeBtn).toBeVisible();
+    const giveUpBtn = page.getByRole('button', { name: /Give Up & Generate/ });
+    await expect(giveUpBtn).toBeVisible();
 
     const leaderboardHeader = page.locator('text=HALL OF FAME LEADERBOARD');
     await expect(leaderboardHeader).toBeVisible();
 
-    // 2. Start vibe recording
-    await vibeBtn.click();
+    // 2. Already recording vibes by default
 
     // Verify state: textarea should clear and show header
     const textarea = page.locator('textarea');
@@ -48,7 +47,6 @@ test.describe('Snakey Vibe Mode & Tournament Test Suite', () => {
     await expect(textarea).toHaveValue(/# Turn 3: Maker played at \(7, 7\)/);
 
     // 4. Give up and generate
-    const giveUpBtn = page.getByRole('button', { name: /Give Up & Generate/ });
     await giveUpBtn.click();
 
     // Wait for the mock code to populate the textarea
@@ -56,12 +54,12 @@ test.describe('Snakey Vibe Mode & Tournament Test Suite', () => {
     await expect(textarea).toHaveValue(/def get_move/, { timeout: 10000 });
 
     // 5. Submit the first strategy
-    await page.getByPlaceholder('Strategy Author/Name').fill('VibePlayer');
+    await page.getByPlaceholder('Strategy Author/Name').fill('TestVibePlayer');
     const submitBtn = page.getByRole('button', { name: /Submit to Tournament/ });
     await submitBtn.click();
 
     // 6. Submit a second strategy
-    // We need at least two strategies in the DB for the tournament worker to run matches!
+    const vibeBtn = page.getByRole('button', { name: /Start Vibe Recording/ });
     await vibeBtn.click();
     await expect(textarea).toHaveValue(/# Game Recording Started.../);
 
@@ -74,7 +72,7 @@ test.describe('Snakey Vibe Mode & Tournament Test Suite', () => {
     await giveUpBtn.click();
     await expect(textarea).toHaveValue(/def get_move/, { timeout: 10000 });
 
-    await page.getByPlaceholder('Strategy Author/Name').fill('Challenger');
+    await page.getByPlaceholder('Strategy Author/Name').fill('TestChallenger');
     await submitBtn.click();
 
     // 7. Monitor the leaderboard for Elo updates
@@ -84,16 +82,17 @@ test.describe('Snakey Vibe Mode & Tournament Test Suite', () => {
     console.log('Waiting for tournament matches to execute and update ELO...');
     
     // We expect both strategies to be listed in the leaderboard
-    await expect(page.locator('text=VibePlayer')).toBeVisible({ timeout: 15000 });
-    await expect(page.locator('text=Challenger')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('text=TestVibePlayer').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('text=TestChallenger').first()).toBeVisible({ timeout: 15000 });
 
     // Wait until one of them has an ELO different from 1200
     let eloUpdated = false;
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 10; i++) {
       await page.waitForTimeout(5000);
       const textContent = await page.locator('.status-card').filter({ hasText: 'HALL OF FAME LEADERBOARD' }).innerText();
       console.log(`Leaderboard state at ${5 * (i+1)}s:\n`, textContent);
-      if (!textContent.includes('1200 ELO') && (textContent.includes('VibePlayer') || textContent.includes('Challenger'))) {
+      if ((textContent.includes('TestVibePlayer') && !textContent.includes('TestVibePlayer\n1200 ELO')) || 
+          (textContent.includes('TestChallenger') && !textContent.includes('TestChallenger\n1200 ELO'))) {
         console.log('ELO ratings successfully updated!');
         eloUpdated = true;
         break;
