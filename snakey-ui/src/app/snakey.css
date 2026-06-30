@@ -68,13 +68,22 @@ main {
     display: flex;
     gap: 1.5rem;
     padding: 0 1rem 2rem 1rem;
-    max-width: 1400px;
+    max-width: 1800px;
     width: 100%;
     align-items: flex-start;
 }
 
 .sidebar {
     flex: 0 0 320px;
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.editor-sidebar {
+    flex: 0 0 400px;
     background-color: var(--card-bg);
     padding: 1rem;
     border-radius: 1rem;

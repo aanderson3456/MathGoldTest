@@ -105,23 +105,6 @@
                     {{currentTurn.toUpperCase()}} WINS!</div>
             </div>
 
-            <div class="control-group" style="margin-top: 1rem;">
-                <h3>Python AI Strategy (Editable)</h3>
-                <textarea [(ngModel)]="pythonStrategyCode" (keydown)="handleTab($event)" style="white-space: pre; overflow-wrap: normal; overflow-x: auto; width: 100%; height: 250px; font-size: 0.75rem; background: #1e1e1e; color: #d4d4d4; padding: 0.5rem; border-radius: 4px; font-family: monospace; border: none; resize: vertical;"></textarea>
-                <button class="primary" style="margin-top: 0.5rem; width: 100%;" (click)="evaluatePythonStrategy()" [disabled]="evaluatingPython">
-                    {{ evaluatingPython ? 'Evaluating...' : 'Test Strategy vs AI' }}
-                </button>
-                <div *ngIf="isAiVsAiMode()" style="margin-top: 0.5rem;">
-                    <button class="primary" style="width: 100%; background: #DAA520; color: #000;" (click)="toggleAutoPlay()" [disabled]="gameOver">
-                        {{ autoPlaying ? 'Stop Auto-Play' : '▶ Start Auto-Play Match' }}
-                    </button>
-                </div>
-                
-                <div style="margin-top: 0.5rem; font-size: 0.7rem; background: #0a0a0a; color: #0f0; padding: 0.5rem; border-radius: 4px; height: 150px; overflow-y: auto; font-family: monospace;">
-                    <div style="color: #666; margin-bottom: 4px;">--- Live Execution Logs ---</div>
-                    <div *ngFor="let log of executionLogs" style="white-space: pre-wrap; margin-bottom: 2px;">{{ log }}</div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -131,5 +114,41 @@
             <div id="shape-preview-main" class="shape-preview mini"></div>
         </div>
         <svg id="grid-svg"></svg>
+    </div>
+
+    <div class="editor-sidebar">
+        <div class="controls">
+            <div class="control-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <h3 style="margin: 0;">Python AI Strategy</h3>
+                    <button class="primary" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; width: auto;" (click)="toggleApiDocs()">
+                        {{ showApiDocs ? 'Hide API Info' : 'Show API Info' }}
+                    </button>
+                </div>
+                
+                <div *ngIf="showApiDocs" style="background: rgba(139, 92, 246, 0.1); border-left: 3px solid var(--accent-color); padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.85rem; border-radius: 0 4px 4px 0;">
+                    <strong style="display: block; margin-bottom: 0.25rem;">API Parameters:</strong>
+                    <ul style="margin: 0 0 0 1rem; padding: 0; color: var(--text-secondary); line-height: 1.4;">
+                        <li><code>board_state</code>: List of dicts, e.g.,<br><code style="font-size: 0.75rem;">[{"x": 0, "y": 0, "owner": "maker"}]</code></li>
+                        <li><code>current_turn</code>: String (<code>'maker'</code> or <code>'breaker'</code>)</li>
+                    </ul>
+                </div>
+
+                <textarea [(ngModel)]="pythonStrategyCode" (keydown)="handleTab($event)" style="white-space: pre; overflow-wrap: normal; overflow-x: auto; width: 100%; height: 400px; font-size: 0.8rem; background: #1e1e1e; color: #d4d4d4; padding: 0.5rem; border-radius: 4px; font-family: monospace; border: none; resize: vertical;"></textarea>
+                <button class="primary" style="margin-top: 0.5rem; width: 100%;" (click)="evaluatePythonStrategy()" [disabled]="evaluatingPython">
+                    {{ evaluatingPython ? 'Evaluating...' : 'Test Strategy vs AI' }}
+                </button>
+                <div *ngIf="isAiVsAiMode()" style="margin-top: 0.5rem;">
+                    <button class="primary" style="width: 100%; background: #DAA520; color: #000;" (click)="toggleAutoPlay()" [disabled]="gameOver">
+                        {{ autoPlaying ? 'Stop Auto-Play' : '▶ Start Auto-Play Match' }}
+                    </button>
+                </div>
+                
+                <div style="margin-top: 0.5rem; font-size: 0.75rem; background: #0a0a0a; color: #0f0; padding: 0.5rem; border-radius: 4px; height: 150px; overflow-y: auto; font-family: monospace;">
+                    <div style="color: #666; margin-bottom: 4px;">--- Live Execution Logs ---</div>
+                    <div *ngFor="let log of executionLogs" style="white-space: pre-wrap; margin-bottom: 2px;">{{ log }}</div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>

@@ -43,6 +43,11 @@ export class Snakey implements AfterViewInit {
     executionLogs: string[] = [];
     autoPlaying = false;
     autoPlayTimeout: any;
+    showApiDocs = false;
+
+    toggleApiDocs() {
+        this.showApiDocs = !this.showApiDocs;
+    }
 
     updatePythonStrategyCode() {
         if (this.targetShapeName === 'Tetromino_O' || this.targetShapeName === 'Pentomino_F') {
