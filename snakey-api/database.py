@@ -19,6 +19,7 @@ class Strategy(Base):
     elo = Column(Float, default=1200.0)
     wins = Column(Integer, default=0)
     losses = Column(Integer, default=0)
+    losses_as_maker = Column(Integer, default=0)
 
 class MatchResult(Base):
     __tablename__ = "match_results"

@@ -281,10 +281,7 @@ Based on the gameplay vibes and the user's description, write the Python `get_mo
 async def submit_strategy(request: SubmitStrategyRequest, db: Session = Depends(get_db)):
     existing = db.query(Strategy).filter(Strategy.author == request.author).first()
     if existing:
-        existing.code = request.code
-        db.commit()
-        db.refresh(existing)
-        return {"status": "success", "strategy_id": existing.id}
+        return {"status": "error", "message": "A strategy with that author name already exists. Please choose a different name."}
     else:
         new_strategy = Strategy(author=request.author, code=request.code, elo=1200.0)
         db.add(new_strategy)
@@ -292,12 +289,17 @@ async def submit_strategy(request: SubmitStrategyRequest, db: Session = Depends(
         db.refresh(new_strategy)
         return {"status": "success", "strategy_id": new_strategy.id}
 
+from typing import Optional
+
 @app.get("/api/leaderboard")
-async def get_leaderboard(db: Session = Depends(get_db)):
-    strategies = db.query(Strategy).order_by(Strategy.elo.desc()).limit(10).all()
+async def get_leaderboard(limit: Optional[int] = 10, db: Session = Depends(get_db)):
+    if limit == 0:
+        strategies = db.query(Strategy).order_by(Strategy.elo.desc()).all()
+    else:
+        strategies = db.query(Strategy).order_by(Strategy.elo.desc()).limit(limit).all()
     return {
         "status": "success",
-        "leaderboard": [{"id": s.id, "author": s.author, "elo": round(s.elo, 1), "wins": s.wins, "losses": s.losses} for s in strategies]
+        "leaderboard": [{"id": s.id, "author": s.author, "elo": round(s.elo, 1), "wins": s.wins, "losses": s.losses, "losses_as_maker": s.losses_as_maker} for s in strategies]
     }
 
 @app.get("/api/recent-matches")
@@ -338,13 +340,30 @@ async def get_strategy(strategy_id: int, db: Session = Depends(get_db)):
 
 # --- Tournament Background Worker ---
 
+IMMUNE_STRATEGIES = ["VibePlayer", "Challenger", "Elder", "Goldfish", "RandomJitter"]
+
+def cull_strategies(db: Session):
+    experimenters = db.query(Strategy).filter(~Strategy.author.in_(IMMUNE_STRATEGIES)).order_by(Strategy.elo.desc()).all()
+    if len(experimenters) > 100:
+        to_delete = experimenters[100:]
+        for s in to_delete:
+            db.query(MatchResult).filter((MatchResult.strategy1_id == s.id) | (MatchResult.strategy2_id == s.id)).delete(synchronize_session=False)
+            db.delete(s)
+        db.commit()
+        print(f"Culled {len(to_delete)} strategies to maintain top 100.")
+
 async def tournament_worker():
     print("Starting async tournament worker...")
+    loops = 0
     while True:
         await asyncio.sleep(5)
+        loops += 1
         
         db = SessionLocal()
         try:
+            if loops % 10 == 0:
+                cull_strategies(db)
+                
             # Get two random strategies
             count = db.query(Strategy).count()
             if count < 2:
@@ -374,6 +393,7 @@ async def tournament_worker():
                 S1, S2 = 0, 1
                 s2.wins += 1
                 s1.losses += 1
+                s1.losses_as_maker += 1
                 winner_id = s2.id
             else: # Draw
                 S1, S2 = 0.5, 0.5

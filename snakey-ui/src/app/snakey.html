@@ -122,7 +122,7 @@
             <svg id="grid-svg"></svg>
 
             <!-- Fullscreen Victory / Defeat Overlay (covers only the board) -->
-            <div *ngIf="gameOver" class="game-overlay" style="border-radius: 0.5rem;">
+            <div *ngIf="showGameOverOverlay" class="game-overlay" style="border-radius: 0.5rem;">
                 <div style="font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);">
                     {{ gameWinner === 'Maker' ? '🏆 MAKER WINS!' : '💀 BREAKER WINS!' }}
                 </div>
@@ -133,9 +133,18 @@
 
                 <div *ngIf="generatingVibeCode" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
                     <div class="spinner"></div>
-                    <div style="color: #a78bfa; font-weight: 600; font-size: 1rem; animation: pulseText 1.5s infinite;">🤖 Gemma is compiling your gameplay vibes...</div>
+                    <div style="color: #a78bfa; font-weight: 600; font-size: 1rem; animation: pulseText 1.5s infinite;">🤖 Gemma is compiling your gameplay vibes... (this usually takes about 30 seconds.)</div>
                 </div>
 
+                <div *ngIf="!generatingVibeCode && vibeCodeCompiled" style="margin-bottom: 1.5rem; padding: 1.25rem; background: rgba(218, 165, 32, 0.15); border: 2px solid #DAA520; border-radius: 0.5rem; max-width: 400px; margin: 0 auto 1.5rem auto;">
+                    <div style="color: #DAA520; font-weight: 800; font-size: 1.1rem; margin-bottom: 0.75rem;">✨ Vibe Code Inferred!</div>
+                    <input type="text" [(ngModel)]="tournamentStrategyName" placeholder="Enter Strategy Name or Author" style="width: 100%; padding: 0.6rem; border-radius: 0.25rem; border: 1px solid #DAA520; background: #fff; color: #000; font-size: 0.9rem; margin-bottom: 0.75rem; box-sizing: border-box;">
+                    <button class="primary" style="width: 100%; background: #DAA520; color: #000; font-weight: bold; padding: 0.6rem; border-radius: 0.25rem; font-size: 0.9rem; border: none;" (click)="submitToTournament()" [disabled]="submittingTournament || !tournamentStrategyName">
+                        {{ submittingTournament ? 'Submitting...' : '🏆 Submit to Tournament' }}
+                    </button>
+                    <div *ngIf="submitSuccess" style="margin-top: 0.5rem; color: #10b981; font-size: 0.85rem; font-weight: bold;">✓ Submitted successfully!</div>
+                    <div *ngIf="submitError" style="margin-top: 0.5rem; color: #ef4444; font-size: 0.85rem; font-weight: bold;">✗ {{submitError}}</div>
+                </div>
 
                 <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                     <button class="primary" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; padding: 0.75rem 1.5rem; font-weight: bold; border-radius: 0.5rem; color: white;" (click)="resetGame()">
@@ -209,7 +218,7 @@
             </div>
 
             <!-- Tournament Submission Form (Shown inside Gemma window after compiling) -->
-            <div *ngIf="!generatingVibeCode && pythonStrategyCode.includes('def get_move')" style="margin-top: 1.5rem; padding: 1.25rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.5rem; border-left: 4px solid #10b981;">
+            <div *ngIf="!generatingVibeCode && vibeCodeCompiled" style="margin-top: 1.5rem; padding: 1.25rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.5rem; border-left: 4px solid #10b981;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                     <div>
                         <span style="display: block; font-weight: bold; color: #10b981; font-size: 1.05rem; margin-bottom: 0.25rem;">✨ Vibe Code Inferred!</span>
@@ -235,7 +244,7 @@
         <!-- Hall of Fame Leaderboard -->
         <div class="status-card" style="border: 2px solid #9333ea; background: #faf5ff; margin-bottom: 1rem; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.1);">
             <div class="status-label" style="color: #7e22ce; font-weight: bold; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
-                <span>🏆 HALL OF FAME LEADERBOARD</span>
+                <span style="cursor: pointer; text-decoration: underline;" (click)="openFullLeaderboard()" title="Click to view full leaderboard">🏆 HALL OF FAME LEADERBOARD</span>
                 <span style="font-size: 0.7rem; color: #a855f7; font-weight: normal; cursor: pointer; text-decoration: underline;" (click)="fetchLeaderboard()">Refresh</span>
             </div>
             <div *ngIf="leaderboard.length === 0" style="color: #6b7280; font-size: 0.85rem; text-align: center; padding: 10px 0;">No strategies yet</div>
@@ -252,10 +261,13 @@
                 </span>
                 <span style="color: #9333ea; font-weight: bold; display: flex; align-items: center; gap: 4px;">
                     {{entry.elo}} ELO
-                    <span style="font-size: 0.7rem; color: #6b7280; font-weight: normal;">({{entry.wins}}W-{{entry.losses}}L)</span>
+                    <span style="font-size: 0.7rem; color: #6b7280; font-weight: normal;">({{entry.wins}}W-{{entry.losses}},{{entry.losses_as_maker || 0}}L)</span>
                 </span>
             </div>
             <div style="font-size: 0.7rem; text-align: center; color: #a855f7; margin-top: 4px; font-style: italic;">💡 Click a row to load its code into the editor!</div>
+            <div style="font-size: 0.7rem; text-align: center; color: #6b7280; margin-top: 6px; border-top: 1px dashed #e9d5ff; padding-top: 6px; font-style: italic;">
+                Note: total W-total,as_maker L. as_maker=0 is potential perfect strategy
+            </div>
         </div>
 
         <!-- Tournament Match Ticker -->
@@ -351,6 +363,51 @@
                         <span style="color: #6ee7b7; font-size: 0.8rem;">vs Challenger: <em [style.color]="evalResult.vs_challenger === 'Win' ? '#10b981' : (evalResult.vs_challenger === 'Loss' ? '#ef4444' : '#fbbf24')">{{ evalResult.vs_challenger || 'Calculating...' }}</em></span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-Screen Leaderboard Modal -->
+    <div *ngIf="showFullLeaderboard" class="game-overlay leaderboard-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
+        <div style="background: #faf5ff; border: 4px solid #9333ea; border-radius: 1rem; width: 90%; max-width: 800px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+            
+            <div style="background: #9333ea; color: white; padding: 1.5rem; text-align: center; font-size: 1.5rem; font-weight: bold; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;">
+                <span>🏆 Full Hall of Fame Leaderboard</span>
+                <button style="background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;" (click)="closeFullLeaderboard()">✕</button>
+            </div>
+            
+            <div style="padding: 1rem; overflow-y: auto; flex-grow: 1;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 1.1rem; color: #1f2937;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #d8b4fe; color: #6b7280; font-size: 0.9rem;">
+                            <th style="padding: 0.75rem;">Rank</th>
+                            <th style="padding: 0.75rem;">Author</th>
+                            <th style="padding: 0.75rem;">ELO</th>
+                            <th style="padding: 0.75rem;">Record (W-L)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let entry of fullLeaderboard; let i = index" 
+                            (click)="loadStrategyFromFullBoard(entry.id)"
+                            style="border-bottom: 1px solid #e9d5ff; cursor: pointer; transition: background 0.2s;"
+                            onmouseover="this.style.background='#f3e8ff'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 0.75rem; font-weight: bold; color: #6b7280;">
+                                <span *ngIf="i === 0">👑 1</span>
+                                <span *ngIf="i === 1">🥈 2</span>
+                                <span *ngIf="i === 2">🥉 3</span>
+                                <span *ngIf="i > 2">{{i + 1}}</span>
+                            </td>
+                            <td style="padding: 0.75rem; font-weight: bold;">{{entry.author}}</td>
+                            <td style="padding: 0.75rem; color: #9333ea; font-weight: bold;">{{entry.elo}}</td>
+                            <td style="padding: 0.75rem; color: #4b5563;">{{entry.wins}}W - {{entry.losses}}L <span style="font-size: 0.8rem; color: #9ca3af;">(As Maker: {{entry.losses_as_maker || 0}}L)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div *ngIf="fullLeaderboard.length === 0" style="text-align: center; padding: 2rem; color: #6b7280;">No strategies found.</div>
+            </div>
+            <div style="background: #f3e8ff; padding: 1rem; text-align: center; font-style: italic; color: #7e22ce; font-size: 0.9rem; flex-shrink: 0;">
+                Click any row to load the strategy into the code editor.
             </div>
         </div>
     </div>
