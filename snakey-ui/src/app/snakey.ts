@@ -1183,34 +1183,46 @@ export class Snakey implements AfterViewInit {
     }
 
     generateVibeCode() {
-        if (this.moveHistory.length === 0) {
-            alert('No moves to analyze! Play some moves first.');
-            return;
-        }
-        this.generatingVibeCode = true;
-        this.isRecordingVibe = false; // Stop recording once we generate
-        
-        this.http.post('/api/generate-vibe-code', {
-            targetShape: this.targetShapeName,
-            trajectory: this.moveHistory,
-            previous_strategy: this.includePreviousStrategy ? this.previousStrategyCode : null
-        }).subscribe({
-            next: (res: any) => {
-                this.generatingVibeCode = false;
-                if (res.status === 'success' && res.code) {
-                    this.pythonStrategyCode = res.code;
-                } else {
-                    alert('Error generating code: ' + (res.message || 'Unknown error'));
-                }
-                this.cdr.detectChanges();
-            },
-            error: (err) => {
-                this.generatingVibeCode = false;
-                console.error(err);
-                alert('API Error during code generation.');
-                this.cdr.detectChanges();
+        try {
+            if (this.moveHistory.length === 0) {
+                alert('No moves to analyze! Play some moves first.');
+                return;
             }
-        });
+            this.generatingVibeCode = true;
+            this.isRecordingVibe = false; // Stop recording once we generate
+            
+            console.log("Preparing to send HTTP POST to /api/generate-vibe-code");
+            const payload = {
+                targetShape: this.targetShapeName,
+                trajectory: this.moveHistory,
+                previous_strategy: this.includePreviousStrategy ? this.previousStrategyCode : null
+            };
+            console.log("Payload:", payload);
+            
+            this.http.post('/api/generate-vibe-code', payload).subscribe({
+                next: (res: any) => {
+                    console.log("HTTP POST success:", res);
+                    this.generatingVibeCode = false;
+                    if (res.status === 'success' && res.code) {
+                        this.pythonStrategyCode = res.code;
+                    } else {
+                        alert('Error generating code: ' + (res.message || 'Unknown error'));
+                    }
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error("HTTP POST error:", err);
+                    this.generatingVibeCode = false;
+                    alert('API Error during code generation: ' + (err.message || 'Unknown error'));
+                    this.cdr.detectChanges();
+                }
+            });
+        } catch (e: any) {
+            console.error("Synchronous exception in generateVibeCode:", e);
+            alert("Synchronous Error: " + e.message);
+            this.generatingVibeCode = false;
+            this.cdr.detectChanges();
+        }
     }
 
     submitToTournament() {

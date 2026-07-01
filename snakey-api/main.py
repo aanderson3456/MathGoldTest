@@ -60,6 +60,13 @@ async def get_move_api(request: GetMoveRequest):
             "traceback": traceback.format_exc()
         }
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 @app.post("/api/evaluate")
 async def evaluate_strategy(submission: CodeSubmit, db: Session = Depends(get_db)):
     # This is a highly simplified and insecure prototype for evaluating user code.
@@ -130,12 +137,6 @@ async def submit_game_fame(fame: GameFame):
 
 # --- Vibe Code & Tournament Endpoints ---
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @app.post("/api/generate-vibe-code")
 async def generate_vibe_code(request: VibeCodeRequest):
