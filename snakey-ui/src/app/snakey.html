@@ -112,48 +112,121 @@
         </div>
     </div>
 
-    <div class="game-container" style="position: relative;">
-        <div class="goal-banner">
-            <span class="goal-text">TARGET: {{targetShapeName.replace('_', ' ')}}</span>
-            <div id="shape-preview-main" class="shape-preview mini"></div>
-        </div>
-        <svg id="grid-svg"></svg>
+    <div class="game-container" style="position: relative; padding-bottom: 1.5rem;">
+        <!-- Board Wrapper (holds goal banner, grid, and overlay) -->
+        <div style="position: relative; width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div class="goal-banner">
+                <span class="goal-text">TARGET: {{targetShapeName.replace('_', ' ')}}</span>
+                <div id="shape-preview-main" class="shape-preview mini"></div>
+            </div>
+            <svg id="grid-svg"></svg>
 
-        <!-- Fullscreen Victory / Defeat Overlay -->
-        <div *ngIf="gameOver" class="game-overlay">
-            <div style="font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);">
-                {{ gameWinner === 'Maker' ? '🏆 MAKER WINS!' : '💀 BREAKER WINS!' }}
+            <!-- Fullscreen Victory / Defeat Overlay (covers only the board) -->
+            <div *ngIf="gameOver" class="game-overlay" style="border-radius: 0.5rem;">
+                <div style="font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);">
+                    {{ gameWinner === 'Maker' ? '🏆 MAKER WINS!' : '💀 BREAKER WINS!' }}
+                </div>
+                
+                <p style="font-size: 1.1rem; color: #cbd5e1; max-width: 400px; margin: 0 auto 1.5rem auto;">
+                    Target shape completed in <strong>{{totalMoves}} moves</strong>.
+                </p>
+
+                <div *ngIf="generatingVibeCode" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                    <div class="spinner"></div>
+                    <div style="color: #a78bfa; font-weight: 600; font-size: 1rem; animation: pulseText 1.5s infinite;">🤖 Gemma is compiling your gameplay vibes...</div>
+                </div>
+
+
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="primary" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; padding: 0.75rem 1.5rem; font-weight: bold; border-radius: 0.5rem; color: white;" (click)="resetGame()">
+                        🔄 Reset & Play Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prominent Prompt Gemma Section - Always visible under the board in center -->
+        <div class="status-card prompt-card" style="width: 100%; max-width: 600px; margin-top: 1.5rem; border: 2px solid #8b5cf6; background: rgba(139, 92, 246, 0.05); border-radius: 0.75rem; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.1); padding: 1.25rem; box-sizing: border-box; text-align: left; position: relative; z-index: 5;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <span style="font-weight: 800; color: #8b5cf6; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+                    🤖 GEMMA STRATEGY CO-PILOT
+                </span>
+                <span *ngIf="gemmaMode === 'vibe' && isRecordingVibe" style="font-size: 0.75rem; color: #ef4444; font-weight: bold; display: flex; align-items: center; gap: 4px; animation: pulseText 1.5s infinite;">
+                    🔴 RECORDING VIBES ({{totalMoves}} MOVES)
+                </span>
             </div>
             
-            <p style="font-size: 1.1rem; color: #cbd5e1; max-width: 400px; margin: 0 auto 1.5rem auto;">
-                Target shape completed in <strong>{{totalMoves}} moves</strong>.
-            </p>
-
-            <div *ngIf="generatingVibeCode" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
-                <div class="spinner"></div>
-                <div style="color: #a78bfa; font-weight: 600; font-size: 1rem; animation: pulseText 1.5s infinite;">🤖 Gemma is compiling your gameplay vibes...</div>
-            </div>
-
-            <!-- Shown BEFORE compiling -->
-            <div *ngIf="!generatingVibeCode && !pythonStrategyCode.includes('def get_move')" style="background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto;">
-                <span style="display: block; font-weight: bold; color: #cbd5e1; margin-bottom: 0.25rem;">⚡ Ready to compile?</span>
-                <span style="font-size: 0.85rem; color: #94a3b8;">You played {{totalMoves}} moves. Click "Compile Vibes to Code" below to generate a Python AI strategy using Gemma.</span>
-            </div>
-
-            <!-- Shown AFTER compiling -->
-            <div *ngIf="!generatingVibeCode && pythonStrategyCode.includes('def get_move')" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto;">
-                <span style="display: block; font-weight: bold; color: #10b981; margin-bottom: 0.25rem;">✨ Vibe Code Inferred!</span>
-                <span style="font-size: 0.85rem; color: #a7f3d0;">Your manual gameplay moves have been translated into Python code in the Strategy Editor. Try submitting it to the Tournament!</span>
-            </div>
-
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <button class="primary" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; padding: 0.75rem 1.5rem; font-weight: bold; border-radius: 0.5rem; color: white;" (click)="resetGame()">
-                    🔄 Reset & Play Again
+            <!-- Mode Toggle Tabs -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 2px solid rgba(139, 92, 246, 0.2); padding-bottom: 0.5rem;">
+                <button [style.background]="gemmaMode === 'vibe' ? '#8b5cf6' : 'transparent'" [style.color]="gemmaMode === 'vibe' ? '#ffffff' : 'var(--text-secondary)'" style="border: none; padding: 0.4rem 1rem; border-radius: 0.5rem; font-weight: bold; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" (click)="gemmaMode = 'vibe'; isRecordingVibe = false">
+                    🎮 Vibe Play Mode
                 </button>
-                <!-- Only visible if not compiled yet -->
-                <button *ngIf="!generatingVibeCode && moveHistory.length > 0 && !pythonStrategyCode.includes('def get_move')" class="primary" style="background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 0.75rem 1.5rem; font-weight: bold; border-radius: 0.5rem; color: white;" (click)="generateVibeCode()">
-                    ⚡ Compile Vibes to Code
+                <button [style.background]="gemmaMode === 'prompt' ? '#8b5cf6' : 'transparent'" [style.color]="gemmaMode === 'prompt' ? '#ffffff' : 'var(--text-secondary)'" style="border: none; padding: 0.4rem 1rem; border-radius: 0.5rem; font-weight: bold; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" (click)="gemmaMode = 'prompt'; isRecordingVibe = false">
+                    ⌨️ Text Prompt Mode
                 </button>
+            </div>
+
+            <!-- Vibe Play Mode Content -->
+            <div *ngIf="gemmaMode === 'vibe'">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 0.75rem 0; line-height: 1.4;">
+                    Play the game manually to record your strategy "vibes". Gemma will watch your moves and translate your playstyle into a Python strategy!
+                </p>
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-right: auto;">
+                        <input type="checkbox" id="include-prev-vibe" [(ngModel)]="includePreviousStrategy" style="width: auto; cursor: pointer; margin: 0;">
+                        <label for="include-prev-vibe" style="font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; user-select: none;">Include previous code</label>
+                    </div>
+                    
+                    <button *ngIf="!isRecordingVibe" class="primary" style="width: auto; background-color: #8b5cf6; padding: 0.6rem 1.25rem; font-size: 0.85rem;" (click)="startVibeRecording()">
+                        🎥 Start Vibe Recording
+                    </button>
+                    
+                    <button *ngIf="isRecordingVibe" class="primary" style="width: auto; background-color: #ef4444; padding: 0.6rem 1.25rem; font-size: 0.85rem;" (click)="giveUpAndGenerate()" [disabled]="generatingVibeCode || moveHistory.length === 0">
+                        ⚡ {{ generatingVibeCode ? 'Analyzing Vibes... (can take 60s)' : 'Compile Vibes' }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Text Prompt Mode Content -->
+            <div *ngIf="gemmaMode === 'prompt'">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 0.75rem 0; line-height: 1.4;">
+                    Describe your winning strategy in plain English. Gemma will turn your text prompt directly into a Python strategy!
+                </p>
+                <textarea [(ngModel)]="vibePrompt" 
+                          placeholder="Enter strategy prompt here... (e.g., Always block opponent's 3-in-a-row, prioritize the center cells)" 
+                          style="width: 100%; height: 80px; font-size: 0.9rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; padding: 0.75rem; background: #ffffff; color: #1e293b; resize: vertical; margin-bottom: 0.75rem; box-sizing: border-box; font-family: inherit; transition: border-color 0.2s;"></textarea>
+                
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-right: auto;">
+                        <input type="checkbox" id="include-prev-prompt" [(ngModel)]="includePreviousStrategy" style="width: auto; cursor: pointer; margin: 0;">
+                        <label for="include-prev-prompt" style="font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; user-select: none;">Include previous code</label>
+                    </div>
+                    
+                    <button class="primary" style="width: auto; background-color: #8b5cf6; padding: 0.6rem 1.25rem; font-size: 0.85rem;" (click)="generateVibeCode()" [disabled]="generatingVibeCode">
+                        ⚡ {{ generatingVibeCode ? 'Generating... (can take 60s)' : 'Generate from Prompt' }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tournament Submission Form (Shown inside Gemma window after compiling) -->
+            <div *ngIf="!generatingVibeCode && pythonStrategyCode.includes('def get_move')" style="margin-top: 1.5rem; padding: 1.25rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.5rem; border-left: 4px solid #10b981;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <div>
+                        <span style="display: block; font-weight: bold; color: #10b981; font-size: 1.05rem; margin-bottom: 0.25rem;">✨ Vibe Code Inferred!</span>
+                        <span style="display: block; font-size: 0.85rem; color: #a7f3d0;">Your gameplay vibes are ready in the Strategy Editor.</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" [(ngModel)]="tournamentStrategyName" placeholder="Enter Strategy Name or Author" style="width: 100%; padding: 0.6rem; border-radius: 0.25rem; border: 1px solid #10b981; background: #fff; color: #000; font-size: 0.85rem;">
+                    </div>
+                    <button class="primary" style="width: auto; background: #10b981; color: #fff; font-weight: bold; padding: 0.6rem 1.25rem; border-radius: 0.25rem; font-size: 0.85rem; border: none;" (click)="submitToTournament()" [disabled]="submittingTournament || !tournamentStrategyName">
+                        {{ submittingTournament ? 'Submitting...' : '🏆 Submit to Tournament' }}
+                    </button>
+                </div>
+                <div *ngIf="submitSuccess" style="margin-top: 0.5rem; color: #10b981; font-size: 0.85rem; font-weight: bold; text-align: left;">✓ Strategy submitted to the Hall of Fame successfully!</div>
+                <div *ngIf="submitError" style="margin-top: 0.5rem; color: #ef4444; font-size: 0.85rem; font-weight: bold; text-align: left;">✗ {{submitError}}</div>
             </div>
         </div>
     </div>
@@ -251,6 +324,8 @@
                     <button class="primary" style="width: 100%; background: #DAA520; color: #000;" (click)="submitToTournament()" [disabled]="submittingTournament">
                         {{ submittingTournament ? 'Submitting...' : '🏆 Submit to Tournament' }}
                     </button>
+                    <div *ngIf="submitSuccess" style="margin-top: 0.5rem; color: #10b981; font-size: 0.8rem; font-weight: bold; text-align: center;">✓ Submitted successfully!</div>
+                    <div *ngIf="submitError" style="margin-top: 0.5rem; color: #ef4444; font-size: 0.8rem; font-weight: bold; text-align: center;">✗ {{submitError}}</div>
                 </div>
                 <div *ngIf="isAiVsAiMode()" style="margin-top: 0.5rem;">
                     <button class="primary" style="width: 100%; background: #DAA520; color: #000;" (click)="toggleAutoPlay()" [disabled]="gameOver">

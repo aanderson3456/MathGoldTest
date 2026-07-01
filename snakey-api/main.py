@@ -7,9 +7,26 @@ import traceback
 import asyncio
 from sqlalchemy.orm import Session
 import random
+import os
+from google import genai
+from google.genai import types
 
 from database import SessionLocal, Strategy, MatchResult
 import sandbox
+
+SHAPES = {
+    "Monomino": [[0, 0]],
+    "Domino": [[0, 0], [1, 0]],
+    "Tromino_I": [[0, 0], [1, 0], [2, 0]],
+    "Tromino_L": [[0, 0], [1, 0], [0, 1]],
+    "Tetromino_O": [[0, 0], [1, 0], [0, 1], [1, 1]],
+    "Tetromino_I": [[0, 0], [1, 0], [2, 0], [3, 0]],
+    "Tetromino_T": [[0, 0], [1, 0], [2, 0], [1, 1]],
+    "Tetromino_L": [[0, 0], [1, 0], [2, 0], [0, 1]],
+    "Tetromino_S": [[0, 0], [1, 0], [1, 1], [2, 1]],
+    "Pentomino_F": [[1, 0], [2, 0], [0, 1], [1, 1], [1, 2]],
+    "Snakey_Hexomino": [[0, 0], [1, 0], [1, 1], [1, 2], [1, 3], [2, 3]]
+}
 
 app = FastAPI()
 
@@ -21,6 +38,7 @@ class VibeCodeRequest(BaseModel):
     targetShape: str
     trajectory: list
     previous_strategy: str | None = None
+    prompt: str | None = None
 
 class SubmitStrategyRequest(BaseModel):
     author: str
@@ -140,19 +158,100 @@ async def submit_game_fame(fame: GameFame):
 
 @app.post("/api/generate-vibe-code")
 async def generate_vibe_code(request: VibeCodeRequest):
-    # Mocking Gemma 2B/7B LLM response based on Kaggle class handover
-    # In a real implementation, we would pass request.trajectory to the model
-    
-    prev_str = ""
-    if request.previous_strategy:
-        # Limit to first 20 lines
-        lines = request.previous_strategy.split('\n')[:20]
-        prev_str = "\n    # Building upon previous strategy snippet:\n"
-        for line in lines:
-            prev_str += f"    # {line}\n"
-    
-    mock_generated_code = f"""def get_move(board_state, current_turn):
-    # AI-Generated Strategy via Gemma 2B (Mock)
+    try:
+        # Force Vertex AI client
+        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
+        client = genai.Client()
+        
+        # Format target shape coordinates
+        shape_coords = SHAPES.get(request.targetShape, [[0, 0]])
+        
+        # Format trajectory
+        traj_str = ""
+        for i, t in enumerate(request.trajectory[:50]): # Limit to first 50 moves to prevent prompt bloat
+            turn = t.get("turn", "Unknown")
+            move = t.get("move", {})
+            traj_str += f"Turn {i+1}: {turn} played at ({move.get('x')}, {move.get('y')})\n"
+            
+        user_prompt_str = f"User's description of their strategy:\n\"{request.prompt}\"\n" if request.prompt else "No user-specified strategy description was provided.\n"
+        
+        prev_strategy_str = ""
+        if request.previous_strategy:
+            prev_strategy_str = f"Build upon or refine this previous python strategy code if provided:\n```python\n{request.previous_strategy}\n```\n"
+
+        system_instruction = """You are an expert programmer and combinatorial games researcher.
+Your task is to write a Python 3 function `get_move(board_state, current_turn)` for the game 'Snakey' (Harary's Polyomino Achievement Game).
+
+Rules of the Game:
+1. Two players, 'Maker' and 'Breaker', take turns placing their colors on a 20x20 grid (coordinates 0 to 19).
+2. 'Maker' wins by forming the target polyomino shape (under translations, rotations, and reflections).
+3. 'Breaker' wins by blocking Maker and preventing Maker from forming the target polyomino.
+4. The function `get_move` will be executed during the game. It must take `board_state` and `current_turn` and return the next move as a dict: `{"x": x_coordinate, "y": y_coordinate}`.
+
+Function signature:
+```python
+def get_move(board_state, current_turn):
+    # board_state is a dictionary mapping coordinate strings "x,y" to ownership strings: "Maker" or "Breaker".
+    # e.g., {"10,10": "Maker", "10,11": "Breaker"}
+    # current_turn is either "Maker" or "Breaker"
+    # Returns: dict {"x": int, "y": int} within the 20x20 grid bounds.
+```
+
+Your code must:
+1. Implement a clever strategy. Prioritize building the target shape if current_turn is 'Maker'. Prioritize blocking Maker if current_turn is 'Breaker' (e.g. identify Maker's adjacent clusters and block them).
+2. ONLY output valid Python code containing the `get_move` function. DO NOT wrap the code in markdown formatting like ```python ... ```, just return the plain python code directly.
+3. Not include any explanation outside the code or comments.
+4. Be robust. If no strategic move is found, fallback to selecting a random available cell or one adjacent to existing pieces.
+"""
+
+        contents = f"""
+Target Shape: {request.targetShape}
+Target Shape Coordinates (relative): {shape_coords}
+
+Here is the move history/trajectory from the player's recent game:
+{traj_str}
+
+{user_prompt_str}
+{prev_strategy_str}
+Based on the gameplay vibes and the user's description, write the Python `get_move` function. Remember, output ONLY raw python code, no markdown code blocks.
+"""
+
+        response = await asyncio.to_thread(
+            client.models.generate_content,
+            model='gemini-2.5-flash',
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=system_instruction,
+                temperature=0.2,
+            )
+        )
+        
+        code = response.text.strip()
+        # Clean up any potential markdown wrapping
+        if code.startswith("```python"):
+            code = code[9:]
+        elif code.startswith("```"):
+            code = code[3:]
+        if code.endswith("```"):
+            code = code[:-3]
+        code = code.strip()
+        
+        return {"status": "success", "code": code}
+        
+    except Exception as e:
+        # Fallback to a mock-up with a comment indicating the error
+        err_msg = f"# Error generating code via Vertex AI: {str(e)}\n"
+        print(f"Vertex AI Generation failed: {e}")
+        
+        prev_str = ""
+        if request.previous_strategy:
+            lines = request.previous_strategy.split('\n')[:20]
+            prev_str = "\n    # Building upon previous strategy snippet:\n"
+            for line in lines:
+                prev_str += f"    # {line}\n"
+        
+        fallback_code = f"""{err_msg}def get_move(board_state, current_turn):
+    # Fallback Strategy (Vertex AI call failed)
     # Infers heuristics from your recent trajectory of {len(request.trajectory)} moves!{prev_str}
     
     import random
@@ -163,7 +262,6 @@ async def generate_vibe_code(request: VibeCodeRequest):
             if f"{{x}},{{y}}" not in board_state:
                 valid_cells.append({{"x": x, "y": y}})
                 
-    # Basic inferred vibe: play near existing pieces
     if valid_cells:
         adjacent = []
         for cell in valid_cells:
@@ -177,15 +275,22 @@ async def generate_vibe_code(request: VibeCodeRequest):
         
     return None
 """
-    return {"status": "success", "code": mock_generated_code}
+        return {"status": "success", "code": fallback_code}
 
 @app.post("/api/submit-strategy")
 async def submit_strategy(request: SubmitStrategyRequest, db: Session = Depends(get_db)):
-    new_strategy = Strategy(author=request.author, code=request.code, elo=1200.0)
-    db.add(new_strategy)
-    db.commit()
-    db.refresh(new_strategy)
-    return {"status": "success", "strategy_id": new_strategy.id}
+    existing = db.query(Strategy).filter(Strategy.author == request.author).first()
+    if existing:
+        existing.code = request.code
+        db.commit()
+        db.refresh(existing)
+        return {"status": "success", "strategy_id": existing.id}
+    else:
+        new_strategy = Strategy(author=request.author, code=request.code, elo=1200.0)
+        db.add(new_strategy)
+        db.commit()
+        db.refresh(new_strategy)
+        return {"status": "success", "strategy_id": new_strategy.id}
 
 @app.get("/api/leaderboard")
 async def get_leaderboard(db: Session = Depends(get_db)):

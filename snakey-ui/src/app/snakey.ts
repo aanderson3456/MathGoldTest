@@ -57,6 +57,10 @@ export class Snakey implements AfterViewInit {
     leaderboardInterval: any;
     tournamentStrategyName = '';
     submittingTournament = false;
+    vibePrompt: string = '';
+    gemmaMode: 'vibe' | 'prompt' = 'vibe';
+    submitSuccess = false;
+    submitError: string | null = null;
 
     toggleApiDocs() {
         this.showApiDocs = !this.showApiDocs;
@@ -387,6 +391,9 @@ export class Snakey implements AfterViewInit {
         if (this.autoPlayTimeout) clearTimeout(this.autoPlayTimeout);
         
         this.moveHistory = [];
+        this.vibePrompt = '';
+        this.submitSuccess = false;
+        this.submitError = null;
         setTimeout(() => {
             if (this.gameMode.includes('custom')) {
                 this.isRecordingVibe = false;
@@ -1184,8 +1191,12 @@ export class Snakey implements AfterViewInit {
 
     generateVibeCode() {
         try {
-            if (this.moveHistory.length === 0) {
-                alert('No moves to analyze! Play some moves first.');
+            if (this.gemmaMode === 'vibe' && this.moveHistory.length === 0) {
+                alert('No moves to analyze! Play some moves first, or switch to Prompt Mode.');
+                return;
+            }
+            if (this.gemmaMode === 'prompt' && !this.vibePrompt?.trim()) {
+                alert('Please enter a strategy prompt.');
                 return;
             }
             this.generatingVibeCode = true;
@@ -1194,8 +1205,9 @@ export class Snakey implements AfterViewInit {
             console.log("Preparing to send HTTP POST to /api/generate-vibe-code");
             const payload = {
                 targetShape: this.targetShapeName,
-                trajectory: this.moveHistory,
-                previous_strategy: this.includePreviousStrategy ? this.previousStrategyCode : null
+                trajectory: this.gemmaMode === 'vibe' ? this.moveHistory : [],
+                previous_strategy: this.includePreviousStrategy ? this.previousStrategyCode : null,
+                prompt: this.vibePrompt || null
             };
             console.log("Payload:", payload);
             
@@ -1235,6 +1247,10 @@ export class Snakey implements AfterViewInit {
             return;
         }
         this.submittingTournament = true;
+        this.submitSuccess = false;
+        this.submitError = null;
+        this.cdr.detectChanges();
+
         this.http.post('/api/submit-strategy', {
             author: this.tournamentStrategyName,
             code: this.pythonStrategyCode
@@ -1242,18 +1258,22 @@ export class Snakey implements AfterViewInit {
             next: (res: any) => {
                 this.submittingTournament = false;
                 if (res.status === 'success') {
-                    alert('Strategy submitted to the Tournament successfully!');
-                    this.tournamentStrategyName = '';
+                    this.submitSuccess = true;
+                    setTimeout(() => {
+                        this.tournamentStrategyName = '';
+                        this.submitSuccess = false;
+                        this.cdr.detectChanges();
+                    }, 3000);
                     this.fetchLeaderboard();
                 } else {
-                    alert('Error submitting strategy: ' + (res.message || 'Unknown error'));
+                    this.submitError = res.message || 'Unknown error';
                 }
                 this.cdr.detectChanges();
             },
             error: (err) => {
                 this.submittingTournament = false;
                 console.error(err);
-                alert('API Error submitting strategy.');
+                this.submitError = 'API Error submitting strategy.';
                 this.cdr.detectChanges();
             }
         });
