@@ -1,4 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import sys
 import io
@@ -574,6 +576,17 @@ async def startup_event():
         db.close()
     asyncio.create_task(tournament_worker())
 
+# Serve static files for the Angular frontend
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.isdir(static_dir):
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
+
+    @app.exception_handler(404)
+    async def custom_404_handler(request, exc):
+        return FileResponse(os.path.join(static_dir, "index.html"))
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Use PORT env variable if available, else 8000
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
